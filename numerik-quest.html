@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Numerik Quest</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3efff;--bg2:#e2f6ff;--card:#fff;--ink:#1d1740;--mut:#6a6490;--line:#d9d2f5;--p:#6c4cff;--ok:#12b886;--bad:#ff5470;--gold:#ffb703;--code:#f0ebff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150f2e;--bg2:#0b2a3c;--card:#241a4d;--ink:#f1edff;--mut:#a79fd6;--line:#3b2f75;--code:#32266b}}
+:root[data-theme="dark"]{--bg:#150f2e;--bg2:#0b2a3c;--card:#241a4d;--ink:#f1edff;--mut:#a79fd6;--line:#3b2f75;--code:#32266b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:linear-gradient(160deg,var(--bg),var(--bg2)) fixed;color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-size:16px;line-height:1.55}
+h1,h2,h3,.dsp{font-family:'Baloo 2',system-ui,sans-serif;margin:0;line-height:1.15}
+.wrap{max-width:720px;margin:0 auto;padding:12px 16px 60px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px 14px;margin:8px 0 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 0 var(--line)}
+.rank{font-weight:800;font-family:'Baloo 2';font-size:18px}
+.bar{flex:1;min-width:120px;height:14px;background:var(--code);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),#00c2ff);border-radius:99px;transition:width .6s}
+.xp{font-weight:700;color:var(--mut);font-size:14px}
+.hero{text-align:center;padding:10px 0 6px}
+.hero h1{font-size:clamp(34px,8vw,54px);font-weight:800;background:linear-gradient(90deg,#6c4cff,#00b4ff,#ff5fa2);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{color:var(--mut);margin:6px auto 0;max-width:460px}
+.path{position:relative;display:flex;flex-direction:column;gap:18px;margin-top:22px}
+.path:before{content:"";position:absolute;left:50%;top:20px;bottom:20px;border-left:4px dashed var(--line);transform:translateX(-2px)}
+.node{position:relative;display:flex;align-items:center;gap:12px;width:min(78%,360px);padding:12px 14px;border-radius:22px;background:var(--card);border:3px solid var(--c);box-shadow:0 5px 0 var(--c);cursor:pointer;text-align:left;font:inherit;color:inherit;transition:transform .15s}
+.node:nth-child(odd){align-self:flex-start}.node:nth-child(even){align-self:flex-end}
+.node:hover:not(:disabled){transform:translateY(-3px)}
+.node:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.7)}
+.node .em{font-size:34px;width:56px;height:56px;display:grid;place-items:center;background:var(--c);border-radius:18px;flex:none}
+.node b{display:block;font-family:'Baloo 2';font-size:18px}.node small{color:var(--mut)}
+.stars{letter-spacing:2px;color:var(--gold)}
+.boss{--c:#ff5470}
+.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:18px;margin:14px 0;box-shadow:0 4px 0 var(--line)}
+.back{background:none;border:0;color:var(--p);font:700 15px Nunito;cursor:pointer;padding:6px 0}
+.pt{display:flex;gap:10px;margin:10px 0}.pt .ic{font-size:22px;flex:none}
+code,pre{background:var(--code);border-radius:8px;font-family:ui-monospace,Menlo,monospace;font-size:14px}
+code{padding:1px 6px}pre{padding:10px 12px;overflow-x:auto;margin:6px 0}
+.btn{background:var(--p);color:#fff;border:0;border-radius:16px;padding:12px 22px;font:800 17px 'Baloo 2';cursor:pointer;box-shadow:0 5px 0 #4a30c4;margin-top:8px}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #4a30c4}
+.btn.alt{background:var(--card);color:var(--p);border:2px solid var(--p);box-shadow:0 4px 0 var(--line)}
+.opt{display:block;width:100%;text-align:left;margin:10px 0;padding:13px 16px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 16px Nunito;cursor:pointer;box-shadow:0 4px 0 var(--line)}
+.opt:hover:not(:disabled){border-color:var(--p)}
+.opt.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 20%,var(--card))}
+.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 20%,var(--card))}
+.fb{padding:12px 14px;border-radius:14px;margin-top:10px;font-weight:700}
+.fb.good{background:color-mix(in srgb,var(--ok) 18%,var(--card))}.fb.bad{background:color-mix(in srgb,var(--bad) 18%,var(--card))}
+.hud{display:flex;justify-content:space-between;align-items:center;font-weight:800}
+.big{font-size:64px;text-align:center}
+table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}th,td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right}th{color:var(--mut)}
+.conf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9}
+.conf span{position:absolute;top:-30px;font-size:26px;animation:fall 2.4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}
+@media (prefers-reduced-motion:reduce){.conf span{animation:none;display:none}.bar i{transition:none}}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+body:before,body:after{content:"";position:fixed;width:46vmax;height:46vmax;border-radius:50%;filter:blur(70px);opacity:.35;z-index:-1;animation:drift 18s ease-in-out infinite alternate;pointer-events:none}
+body:before{background:#7c5cff;top:-20vmax;left:-15vmax}body:after{background:#00c2ff;bottom:-22vmax;right:-15vmax;animation-delay:-9s}
+@keyframes drift{to{transform:translate(8vmax,6vmax)}}
+.mas{font-size:72px;animation:bob 2.4s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-10px) rotate(-5deg)}}
+.node.cur{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 5px 0 var(--c),0 0 0 9px color-mix(in srgb,var(--c) 28%,transparent)}}
+.dots{display:flex;gap:6px;margin:8px 0 14px}.dots i{flex:1;height:8px;border-radius:9px;background:var(--line)}.dots i.on{background:var(--p)}
+.slide{background:var(--card);border:3px solid var(--c);border-radius:26px;padding:22px;box-shadow:0 7px 0 var(--c);min-height:190px;animation:pop .35s}
+@keyframes pop{from{transform:scale(.96);opacity:0}}
+.slide.an{background:linear-gradient(135deg,color-mix(in srgb,var(--c) 24%,var(--card)),var(--card))}
+.slide.mem{background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 32%,var(--card)),var(--card))}
+.sic{font-size:48px;line-height:1.1}.sb{font-size:17px;line-height:1.7}.slide h3{font-size:22px;margin:4px 0 6px}
+.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}.lt{font-size:26px}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+input[type=range]{width:100%;accent-color:var(--p)}
+.in{width:100%;padding:8px 10px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 16px Nunito;margin:4px 0 10px}
+@media (prefers-reduced-motion:reduce){*,:before,:after{animation:none!important}}
+</style></head><body><div class="wrap" id="app"></div>
+<script>
+const L=[
+{id:1,e:'📈',t:'Fungsi & Turunan',d:'Akar, gradien, sekan, turunan',c:'#7c5cff',
+pts:[['🎯','<b>Akar</b> = nilai x yang bikin f(x)=0 (titik potong sumbu-x). Contoh <code>x²−4=0</code> → x = −2 atau 2.'],['📐','<b>Gradien</b> = naik/maju = Δy/Δx. Garis <code>y=2x+1</code> lewat (0,1) dan (2,5) → m = 2.'],['✂️','<b>Garis sekan</b> lewat dua titik kurva: <code>m = [f(xB)−f(xA)]/(xB−xA)</code>. Rata-rata antara dua titik.'],['⚡','<b>Turunan</b> = gradien sekan saat Δx→0 (tidak sama dengan 0!) = gradien garis singgung. Aturan: <code>d/dx xⁿ = n·xⁿ⁻¹</code>, konstanta → 0, turunkan per suku.']],
+q:[['Akar dari f(x) = x² − 4 adalah…','x = −2 dan x = 2','x = 4','x = 0','x = −4 dan 4','Akar = f(x)=0 → (x−2)(x+2)=0, jadi x=−2 atau 2.'],['Gradien sekan f(x)=x²−4 lewat A(1,−3) dan B(3,5)?','4','2','8','−4','(5−(−3))/(3−1) = 8/2 = 4.'],['Turunan dari 3x² + 2x − 5 adalah…','6x + 2','6x − 5','3x + 2','6x² + 2','Pangkat jadi pengali, pangkat dikurangi 1; konstanta −5 hilang.']]},
+{id:2,e:'🎯',t:'Analisis Galat',d:'Eksak, hampiran, toleransi',c:'#00a8e8',
+pts:[['📏','<b>Galat absolut</b> Eₐ = |acuan − hampiran|<br><b>Galat relatif</b> Eᵣ = Eₐ / |acuan|<br><b>Galat persen</b> E% = Eᵣ × 100%'],['⚖️','Galat relatif membandingkan galat di skala berbeda: meleset 1 itu parah untuk nilai 2, tapi aman untuk 1.000.000.'],['🚫','Jebakan: acuan = 0 → galat relatif <b>tidak bisa</b> dipakai (#DIV/0!).'],['✅','<b>Toleransi</b>: galat ≤ toleransi → diterima (sesuai batas yang dipilih, bukan benar mutlak).'],['✂️','<b>Pembulatan</b> 6,4876 → 6,49. <b>Pemotongan</b> → 6,48.']],
+q:[['Acuan √2 = 1,41421356, hampiran 1,41. Galat absolutnya?','0,00421356','1,41421356','0,01','0,0421356','|1,41421356 − 1,41| = 0,00421356.'],['Kapan galat relatif tidak bisa dihitung?','Saat nilai acuan = 0','Saat hampiran = 0','Saat galat absolut = 0','Saat toleransi = 0','Rumusnya dibagi |acuan|, jadi acuan 0 = bagi nol.'],['6,4876 ke 2 angka di belakang koma: dibulatkan vs dipotong?','6,49 dan 6,48','6,48 dan 6,49','6,49 dan 6,49','6,48 dan 6,48','Digit berikutnya 7 (≥5) → naik saat dibulatkan; dipotong langsung dibuang.']]},
+{id:3,e:'✂️',t:'Metode Bisection',d:'Belah interval berulang',c:'#12b886',bis:1,
+pts:[['🎲','Seperti tebak angka 1–100: belah dua terus, buang separuh yang salah.'],['📋','Syarat: f kontinu & <code>f(a)·f(b) &lt; 0</code> (beda tanda → pasti ada akar).'],['🔁','Tiap iterasi: <code>c=(a+b)/2</code>. Kalau f(a)·f(c)&lt;0 → [a,c], kalau &gt;0 → [c,b].'],['🛑','<b>U = (b−a)/2</b> = batas maksimum tebakan meleset. U ≤ toleransi → berhenti. U selalu jadi setengah tiap iterasi.'],['⚠️','Beda: <b>U</b> = jarak ke akar (dari lebar interval); <b>residual f(c)</b> = nilai fungsi, bukan jarak.']],
+q:[['Syarat awal Bisection pada [a, b]?','f(a)·f(b) < 0','f(a)·f(b) > 0','f(a) = f(b)','f(a) + f(b) = 0','Beda tanda + kontinu → kurva pasti memotong sumbu-x.'],['f(x)=x³−x−2 pada [1,2], titik tengah c iterasi 1?','1,5','1','2','1,75','c = (1+2)/2 = 1,5.'],['Apa arti U = (b − a)/2?','Batas maksimum tebakan meleset dari akar','Nilai f(c)','Akar sebenarnya','Jumlah iterasi','U berasal dari lebar interval, bukan dari nilai fungsi.']]},
+{id:4,e:'🚀',t:'Metode Newton',d:'Garis singgung menuju akar',c:'#ff8a00',
+pts:[['🏹','Mulai dari satu tebakan, tarik garis singgung, titik potong sumbu-x jadi tebakan berikutnya.'],['🧮','Rumus: <pre>xₙ₊₁ = xₙ − f(xₙ) / f′(xₙ)</pre>'],['🛑','Berhenti kalau <b>KEDUANYA</b>: perubahan <code>δ=|xₙ₊₁−xₙ| ≤ ε</code> dan <code>R=|f(xₙ₊₁)| ≤ ε</code> (tugas: ε=0,0001).'],['💥','Waspada: f′(xₙ)=0 (bagi nol, mis. x²−3 dari x₀=0), tebakan jelek bisa loncat jauh, maks 20 iterasi. Belum memenuhi → lapor "belum memenuhi kriteria".'],['⚡','Contoh x²−2, x₀=1,5: 1,5 → 1,4167 → 1,4142 (√2) hanya 3 iterasi!']],
+q:[['Rumus iterasi Newton?','xₙ₊₁ = xₙ − f(xₙ)/f′(xₙ)','xₙ₊₁ = xₙ + f(xₙ)/f′(xₙ)','xₙ₊₁ = (a+b)/2','xₙ₊₁ = xₙ − f′(xₙ)/f(xₙ)','Dari gradien garis singgung dua titik, lalu diselesaikan untuk xₙ₊₁.'],['f′(xₙ)=0 tapi f(xₙ)≠0. Apa yang terjadi?','Langkah tak bisa dihitung (bagi nol)','Akar ketemu','Newton makin cepat','Hasil otomatis 0','Pembagi nol dilarang; ganti tebakan awal.'],['Kapan Newton berhenti (menurut ringkasan)?','δ ≤ ε dan R ≤ ε keduanya','Cukup δ ≤ ε','Cukup R ≤ ε','Setelah tepat 3 iterasi','Perubahan kecil bukan galat sejati, jadi dua pemeriksaan dipakai bareng.']]},
+{id:5,e:'🧩',t:'Eliminasi Gauss',d:'SPL → segitiga atas',c:'#ff5fa2',
+pts:[['🧱','<b>SPL</b>: beberapa persamaan linear yang harus dipenuhi bersamaan. Tiap persamaan jadi satu baris matriks augmented <code>[1 1 1 | 6]</code>.'],['🔧','<b>Operasi baris</b>: tukar baris · kalikan baris (m≠0) · <code>Ri ← Ri + m·Rj</code>.'],['🎛️','Pengali <code>m = koefisien yang dihilangkan / pivot</code>. Pivot pembagi tidak boleh nol; kalau nol, tukar baris.'],['🔺','Eliminasi maju → <b>segitiga atas</b> (di bawah diagonal = 0), lalu <b>substitusi mundur</b> dari baris terbawah.'],['✅','Contoh: 5z=15 → z=3; y+2z=8 → y=2; x+y+z=6 → x=1. Selalu cek ke persamaan awal!']],
+q:[['Pengali m untuk menghilangkan koefisien di bawah pivot?','Koefisien yang dihilangkan ÷ pivot','Pivot ÷ koefisien','Koefisien × pivot','Selalu 1','R₂ ← R₂ − m·R₁ dengan m = a₂₁/a₁₁.'],['Hasil akhir eliminasi Gauss lalu langkah berikutnya?','Segitiga atas, lalu substitusi mundur','Matriks identitas, langsung baca','Segitiga bawah, substitusi maju','Matriks nol','Gauss berhenti di segitiga atas.'],['Dari 5z=15 dan y+2z=8, berapa y?','2','3','8','1','z=3 → y = 8 − 2(3) = 2.']]},
+{id:6,e:'💎',t:'Gauss–Jordan',d:'Sampai matriks identitas',c:'#7c5cff',
+pts:[['🏁','Lanjut dari Gauss sampai kiri jadi <b>identitas (RREF)</b> → jawaban langsung terbaca, tanpa substitusi mundur.'],['🪜','Eliminasi maju + <b>normalisasi pivot</b> (bagi seluruh baris, ruas kanan ikut!) + <b>eliminasi ke atas</b>.'],['🧪','Contoh: <code>R3←R3/5</code> → [0 0 1 | 3]; <code>R2←R2−2R3</code>; <code>R1←R1−R3</code>; <code>R1←R1−R2</code> → x=1, y=2, z=3.'],['📝','Pola: baris baru = baris lama − (angka yang mau dinolkan) × baris pivot. Di spreadsheet: tanda <code>$</code> mengunci sel pengali.'],['📌','Semua tugas: spreadsheet harus menyimpan <b>formula</b>, bukan cuma jawaban akhir.']],
+q:[['Bentuk akhir Gauss–Jordan?','RREF (matriks identitas di kiri)','Segitiga atas','Segitiga bawah','Matriks nol','Itu pembeda utamanya dari Gauss.'],['Baris [0 0 5 | 15] dinormalisasi (÷5) jadi?','[0 0 1 | 3]','[0 0 1 | 15]','[0 0 5 | 3]','[0 0 0 | 3]','Ruas kanan ikut dibagi: 15/5 = 3.'],['Keunggulan Gauss–Jordan dibanding Gauss?','Solusi dibaca langsung, tanpa substitusi mundur','Tidak butuh pivot','Selalu lebih sedikit langkah','Tidak perlu dicek balik','Cek balik ke persamaan awal tetap wajib.']]}
+];
+const X={
+1:{an:'Bayangin kamu naik motor. Speedometer menunjukkan kecepatan <b>saat ini</b> (itu turunan), bukan kecepatan rata-rata satu perjalanan (itu sekan). Turunan = “kecuramannya seketika”.',mem:'Akar: f(x)=0 · Gradien: Δy/Δx · Turunan: gradien sekan saat Δx→0 · xⁿ → n·xⁿ⁻¹'},
+2:{an:'Kamu bilang tinggimu 170 cm, padahal aslinya 170,4. Meleset 0,4 itu <b>galat</b>. Kecil untuk tinggi badan, tapi parah kalau ukuran kuku. Makanya ada galat <b>relatif</b>.',mem:'Eₐ=|acuan−hampiran| · Eᵣ=Eₐ/|acuan| · E%=Eᵣ×100 · acuan 0 = galat relatif tak bisa dihitung'},
+3:{an:'Main tebak angka 1–100. Kamu tebak 50, dibilang “kurang tinggi”, jadi separuh bawah dibuang. Bisection persis begitu, tapi yang dibelah adalah <b>interval</b> tempat akar bersembunyi.',mem:'f(a)·f(b)<0 · c=(a+b)/2 · U=(b−a)/2 · U ≤ toleransi → berhenti'},
+4:{an:'Kamu menuruni bukit gelap sambil meraba kemiringan tanah, lalu melangkah ke arah tanah datar. Newton: raba kemiringan (turunan), lalu <b>meluncur lurus mengikuti garis singgung</b> sampai sumbu-x.',mem:'xₙ₊₁ = xₙ − f/f′ · berhenti jika δ ≤ ε <b>dan</b> R ≤ ε · awas f′ = 0'},
+5:{an:'Seperti teka-teki detektif: beberapa petunjuk harus benar bersamaan. Eliminasi Gauss <b>menyingkirkan variabel satu per satu</b> sampai tinggal satu yang mudah, lalu kamu naik lagi ke atas.',mem:'Matriks augmented → operasi baris → segitiga atas → substitusi mundur → cek balik'},
+6:{an:'Gauss menumpuk tangga sampai atap, lalu turun pelan-pelan. Gauss–Jordan <b>membersihkan semuanya sekalian</b> sampai tiap baris cuma berisi satu variabel, jadi jawabannya tinggal dibaca.',mem:'Normalisasi pivot jadi 1 · eliminasi ke atas · hasil identitas (RREF) · jawaban terbaca langsung'}};
+const RANKS=['Pemula Hitung 🐣','Pemburu Akar 🏹','Penakluk Galat 🛡️','Master Matriks 🧙','Legenda Numerik 👑'];
+let S={xp:0,st:{}},V={v:'map'};
+try{const s=localStorage.getItem('nq');if(s)S=JSON.parse(s)}catch(e){}
+const save=()=>{try{localStorage.setItem('nq',JSON.stringify(S))}catch(e){}};
+const $=document.getElementById('app');
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const sh=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
+const done=()=>L.filter(l=>S.st[l.id]>0).length;
+const rk=()=>Math.min(RANKS.length-1,Math.floor(S.xp/100));
+function hdr(){const r=rk(),n=(S.xp%100);return `<div class="top"><span class="rank">${RANKS[r]}</span><div class="bar"><i style="width:${r==4?100:n}%"></i></div><span class="xp">⭐ ${S.xp} XP</span></div>`}
+function stars(n){return n?'★'.repeat(n)+'☆'.repeat(3-n):'☆☆☆'}
+function map(){V.v='map';
+let h=hdr()+`<div class="hero"><div class="mas">🦉</div><h1>Numerik Quest</h1><p>Selesaikan 6 level, kumpulkan bintang, lalu lawan bos terakhir. Belajar Metode Numerik jadi petualangan!</p></div><div class="path">`;
+const cur=L.findIndex(l=>!S.st[l.id]);L.forEach((l,i)=>{const lock=i>0&&!S.st[L[i-1].id];h+=`<button class="node${i==cur?' cur':''}" style="--c:${l.c}" ${lock?'disabled':''} onclick="lesson(${l.id})"><span class="em">${lock?'🔒':l.e}</span><span><b>P${l.id} · ${l.t}</b><small>${l.d}</small><br><span class="stars">${stars(S.st[l.id]||0)}</span></span></button>`});
+const bl=done()<6;h+=`<button class="node boss" ${bl?'disabled':''} onclick="boss()"><span class="em" style="background:#ff5470">${bl?'🔒':'🐉'}</span><span><b>Bos Akhir: Naga Galat</b><small>8 soal acak dari semua materi</small><br><span class="stars">${stars(S.st[7]||0)}</span></span></button></div>`;
+$.innerHTML=h}
+let bi,LS;
+const tbl=(h,r)=>'<div style="overflow-x:auto"><table><tr>'+h.map(x=>`<th>${x}</th>`).join('')+'</tr>'+r.map(x=>'<tr>'+x.map(y=>`<td>${y}</td>`).join('')+'</tr>').join('')+'</table></div>';
+const n4=x=>x.toFixed(4).replace('.',','),$i=id=>document.getElementById(id);
+function t1(h){h=+h;const fx=x=>x*x-4,sx=x=>20+x*90,sy=y=>200-(y+4)*22,m=(fx(1+h)-fx(1))/h;let p='';for(let x=0;x<=3.2;x+=.1)p+=sx(x)+','+sy(fx(x))+' ';
+$i('t1').innerHTML=`<svg viewBox="0 0 320 240" style="width:100%;background:var(--code);border-radius:14px"><polyline points="${p}" fill="none" stroke="#7c5cff" stroke-width="3"/><line x1="${sx(0)}" y1="${sy(-3-m)}" x2="${sx(3.2)}" y2="${sy(-3+m*2.2)}" stroke="#ff5470" stroke-width="2"/><circle cx="${sx(1)}" cy="${sy(-3)}" r="6" fill="#12b886"/><circle cx="${sx(1+h)}" cy="${sy(fx(1+h))}" r="6" fill="#ffb703"/></svg><p><b>Δx = ${h.toFixed(2)}</b> → gradien sekan = <b>${m.toFixed(2)}</b>. Makin kecil Δx, makin dekat ke <b>f′(1) = 2</b> 🎯</p>`}
+function t2(){const a=+$i('ia').value,b=+$i('ib').value,e=Math.abs(a-b);$i('t2').innerHTML=`<p>Eₐ = <b>${+e.toFixed(8)}</b><br>Eᵣ = <b>${a?+(e/Math.abs(a)).toFixed(8):'❌ tak bisa (acuan = 0)'}</b><br>E% = <b>${a?+(e/Math.abs(a)*100).toFixed(6)+'%':'—'}</b></p>`}
+let nw;function nreset(){nw={x:1.5,r:[],ok:0};dn()}
+function nstep(){if(nw.ok||nw.r.length>=6)return;const x=nw.x,fx=x*x-2,d=2*x,y=x-fx/d,dl=Math.abs(y-x),R=Math.abs(y*y-2),c=v=>v.toFixed(6).replace('.',',');nw.r.push([nw.r.length,n4(x),n4(fx),n4(d),n4(y),c(dl),c(R)]);nw.x=y;nw.ok=dl<=1e-4&&R<=1e-4;dn()}
+function dn(){$i('nt').innerHTML=(nw.r.length?tbl(['n','xₙ','f','f′','xₙ₊₁','δ','R'],nw.r):'')+(nw.ok?'<div class="fb good">δ dan R ≤ 0,0001 → berhenti! Akar ≈ √2 🎉</div>':'')}
+const MT={5:[['Matriks awal',[[1,1,1,6],[2,-1,1,3],[1,2,3,14]]],['R₂←R₂−2R₁ dan R₃←R₃−R₁',[[1,1,1,6],[0,-3,-1,-9],[0,1,2,8]]],['Tukar R₂↔R₃',[[1,1,1,6],[0,1,2,8],[0,-3,-1,-9]]],['R₃←R₃+3R₂ → segitiga atas ✅',[[1,1,1,6],[0,1,2,8],[0,0,5,15]]],['Substitusi mundur: z=3 → y=2 → x=1 🎉',[[1,1,1,6],[0,1,2,8],[0,0,5,15]]]],
+6:[['Mulai dari hasil Gauss',[[1,1,1,6],[0,1,2,8],[0,0,5,15]]],['R₃←R₃/5 (normalisasi pivot)',[[1,1,1,6],[0,1,2,8],[0,0,1,3]]],['R₂←R₂−2R₃',[[1,1,1,6],[0,1,0,2],[0,0,1,3]]],['R₁←R₁−R₃',[[1,1,0,3],[0,1,0,2],[0,0,1,3]]],['R₁←R₁−R₂ → identitas! x=1, y=2, z=3 🎉',[[1,0,0,1],[0,1,0,2],[0,0,1,3]]]]};
+let mi=0,mk=5;
+function mdraw(){const[c,m]=MT[mk][mi];$i('mx').innerHTML=`<div class="fb">${c}</div><pre>${m.map(r=>'[ '+r.slice(0,3).map(v=>String(v).padStart(2)).join('  ')+' | '+String(r[3]).padStart(2)+' ]').join('\n')}</pre>`}
+function mstep(d){mi=Math.max(0,Math.min(MT[mk].length-1,mi+d));mdraw()}
+const mxh=`<p>Klik untuk melihat tiap operasi baris.</p><div id="mx"></div><button class="btn alt" onclick="mstep(-1)">← Mundur</button> <button class="btn alt" onclick="mstep(1)">Maju →</button>`;
+const T={
+1:[`<p>Geser Δx: jarak titik B (kuning) ke A (hijau). Garis merah = sekan.</p><input type="range" min="0.05" max="2" step="0.05" value="2" oninput="t1(this.value)"><div id="t1"></div>`,()=>t1(2)],
+2:[`<p>Ubah angkanya dan lihat galatnya berubah.</p>Acuan<input class="in" id="ia" type="number" step="any" value="1.41421356" oninput="t2()">Hampiran<input class="in" id="ib" type="number" step="any" value="1.41" oninput="t2()"><div id="t2"></div>`,t2],
+3:[`<p>x³ − x − 2 pada [1, 2]. Belah terus sampai U ≤ 0,01.</p><div id="bt"></div><button class="btn alt" onclick="bstep()">Belah interval ✂️</button> <button class="btn alt" onclick="breset()">Ulang</button>`,()=>breset()],
+4:[`<p>x² − 2 dengan x₀ = 1,5. Lihat Newton melesat ke √2.</p><div id="nt"></div><button class="btn alt" onclick="nstep()">Iterasi berikutnya 🚀</button> <button class="btn alt" onclick="nreset()">Ulang</button>`,nreset],
+5:[mxh,()=>{mk=5;mi=0;mdraw()}],6:[mxh,()=>{mk=6;mi=0;mdraw()}]};
+function lesson(id){const l=L.find(x=>x.id==id),x=X[id],t=T[id];LS={l,i:0,s:[['💡','Bayangin dulu',x.an],...l.pts.map(q=>[q[0],'',q[1]]),['🎮','Coba sendiri!',t[0],t[1]],['🧠','Ingat ini!',x.mem]]};slide()}
+function slide(){V.v='lesson';const{l,i,s}=LS,p=s[i],last=i==s.length-1;
+$.innerHTML=hdr()+`<button class="back" onclick="map()">← Peta</button><h2 class="lt">${l.e} P${l.id} · ${l.t}</h2><div class="dots">${s.map((_,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')}</div><div class="slide ${i==0?'an':last?'mem':''}" style="--c:${l.c}"><div class="sic">${p[0]}</div>${p[1]?`<h3>${p[1]}</h3>`:''}<div class="sb">${p[2]}</div></div><div class="nav"><button class="btn alt" ${i?'':'disabled'} onclick="LS.i--;slide()">← Balik</button>${last?`<button class="btn" onclick="quiz(${l.id})">Mulai Quiz ⚔️</button>`:`<button class="btn" onclick="LS.i++;slide()">Lanjut →</button>`}</div>`;
+if(p[3])p[3]();window.scrollTo(0,0)}
+const f=x=>x*x*x-x-2;
+function bstep(){if(bi.rows.length>=8)return;const{a,b}=bi,c=(a+b)/2,u=(b-a)/2;bi.rows.push([bi.rows.length+1,a,b,c,f(c),u]);if(f(a)*f(c)<0)bi.b=c;else bi.a=c;drawb()}
+function breset(){bi={a:1,b:2,rows:[]};drawb()}
+function drawb(){const r=bi.rows,n=x=>x.toFixed(4).replace('.',',');let t='';if(r.length){t='<table><tr><th>iter</th><th>a</th><th>b</th><th>c</th><th>f(c)</th><th>U</th></tr>'+r.map(x=>`<tr><td>${x[0]}</td><td>${n(x[1])}</td><td>${n(x[2])}</td><td>${n(x[3])}</td><td>${n(x[4])}</td><td>${n(x[5])}</td></tr>`).join('')+'</table>';const u=r[r.length-1][5];t+=u<=0.01?'<div class="fb good">U ≤ 0,01 → berhenti! Akar ≈ '+n(r[r.length-1][3])+' 🎉</div>':'<div class="fb">U masih &gt; 0,01 → lanjut membelah.</div>'}document.getElementById('bt').innerHTML=t}
+let Q;
+function quiz(id){const l=L.find(x=>x.id==id);Q={id,qs:sh(l.q),i:0,h:3,ok:0,c:l.c};ask()}
+function boss(){const all=L.flatMap(l=>l.q);Q={id:7,qs:sh(all).slice(0,8),i:0,h:4,ok:0,c:'#ff5470'};ask()}
+function ask(){V.v='quiz';const q=Q.qs[Q.i],o=sh(q.slice(1,5).map((t,k)=>[t,k==0]));Q.cur={o,q};
+$.innerHTML=hdr()+`<div class="hud"><button class="back" onclick="map()">✕ Keluar</button><span>${'❤️'.repeat(Q.h)||'💔'}</span><span>${Q.i+1}/${Q.qs.length}</span></div><div class="card" style="border-color:${Q.c}"><h3>${esc(q[0])}</h3><div id="os">${o.map((x,k)=>`<button class="opt" onclick="pick(${k})">${esc(x[0])}</button>`).join('')}</div><div id="fb"></div></div>`;window.scrollTo(0,0)}
+function pick(k){const{o,q}=Q.cur,right=o[k][1];const bs=document.querySelectorAll('.opt');bs.forEach((b,j)=>{b.disabled=true;if(o[j][1])b.classList.add('good');else if(j==k)b.classList.add('bad')});
+const first=!S.st[Q.id];if(right){Q.ok++;if(first)S.xp+=10}else Q.h--;save();
+const last=Q.i==Q.qs.length-1||Q.h<=0;
+document.getElementById('fb').innerHTML=`<div class="fb ${right?'good':'bad'}">${right?'🎉 Benar!'+(first?' +10 XP':''):'💥 Belum tepat.'}<br><span style="font-weight:500">${q[5]}</span></div><button class="btn" onclick="${last?'fin()':'Q.i++;ask()'}">${last?'Lihat hasil':'Lanjut'}</button>`}
+function fin(){const win=Q.h>0,n=win?Math.max(1,Math.min(3,Q.h-(Q.id==7?1:0))):0;
+let bonus=0;if(win){if(!S.st[Q.id])bonus=Q.id==7?50:20;S.xp+=bonus;S.st[Q.id]=Math.max(S.st[Q.id]||0,n)}save();
+$.innerHTML=hdr()+`<div class="card" style="text-align:center"><div class="big">${win?(Q.id==7?'👑':'🏆'):'😵'}</div><h2>${win?(Q.id==7?'Naga Galat dikalahkan!':'Level selesai!'):'Hati habis!'}</h2><p class="stars" style="font-size:34px;margin:6px 0">${stars(n)}</p><p>${Q.ok}/${Q.qs.length} benar${bonus?` · bonus +${bonus} XP`:''}</p>${win?'':'<p style="color:var(--mut)">Baca ulang materinya, lalu coba lagi.</p>'}<button class="btn" onclick="${Q.id==7?'boss()':'quiz('+Q.id+')'}">Main lagi</button> <button class="btn alt" onclick="${win||Q.id==7?'map()':'lesson('+Q.id+')'}">${win||Q.id==7?'Ke peta':'Baca materi'}</button></div>`;if(win)conf()}
+function conf(){const d=document.createElement('div');d.className='conf';d.innerHTML=Array.from({length:30},()=>`<span style="left:${Math.random()*100}%;animation-delay:${Math.random()*.8}s">${['🎉','⭐','✨','💎','🔥'][Math.random()*5|0]}</span>`).join('');document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}
+map();
+</script></body></html>
