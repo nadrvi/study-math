@@ -1,236 +1,1168 @@
 <!DOCTYPE html>
-<html lang="id"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Numerik Quest</title>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
-<style>
-:root{--bg:#f3efff;--bg2:#e2f6ff;--card:#fff;--ink:#1d1740;--mut:#6a6490;--line:#d9d2f5;--p:#6c4cff;--ok:#12b886;--bad:#ff5470;--gold:#ffb703;--code:#f0ebff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150f2e;--bg2:#0b2a3c;--card:#241a4d;--ink:#f1edff;--mut:#a79fd6;--line:#3b2f75;--code:#32266b}}
-:root[data-theme="dark"]{--bg:#150f2e;--bg2:#0b2a3c;--card:#241a4d;--ink:#f1edff;--mut:#a79fd6;--line:#3b2f75;--code:#32266b}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-*{box-sizing:border-box}
-body{margin:0;min-height:100vh;background:linear-gradient(160deg,var(--bg),var(--bg2)) fixed;color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-size:16px;line-height:1.55}
-h1,h2,h3,.dsp{font-family:'Baloo 2',system-ui,sans-serif;margin:0;line-height:1.15}
-.wrap{max-width:720px;margin:0 auto;padding:12px 16px 60px}
-.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:10px 14px;margin:8px 0 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 4px 0 var(--line)}
-.rank{font-weight:800;font-family:'Baloo 2';font-size:18px}
-.bar{flex:1;min-width:120px;height:14px;background:var(--code);border-radius:99px;overflow:hidden}
-.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--p),#00c2ff);border-radius:99px;transition:width .6s}
-.xp{font-weight:700;color:var(--mut);font-size:14px}
-.hero{text-align:center;padding:10px 0 6px}
-.hero h1{font-size:clamp(34px,8vw,54px);font-weight:800;background:linear-gradient(90deg,#6c4cff,#00b4ff,#ff5fa2);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{color:var(--mut);margin:6px auto 0;max-width:460px}
-.path{position:relative;display:flex;flex-direction:column;gap:18px;margin-top:22px}
-.path:before{content:"";position:absolute;left:50%;top:20px;bottom:20px;border-left:4px dashed var(--line);transform:translateX(-2px)}
-.node{position:relative;display:flex;align-items:center;gap:12px;width:min(78%,360px);padding:12px 14px;border-radius:22px;background:var(--card);border:3px solid var(--c);box-shadow:0 5px 0 var(--c);cursor:pointer;text-align:left;font:inherit;color:inherit;transition:transform .15s}
-.node:nth-child(odd){align-self:flex-start}.node:nth-child(even){align-self:flex-end}
-.node:hover:not(:disabled){transform:translateY(-3px)}
-.node:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.7)}
-.node .em{font-size:34px;width:56px;height:56px;display:grid;place-items:center;background:var(--c);border-radius:18px;flex:none}
-.node b{display:block;font-family:'Baloo 2';font-size:18px}.node small{color:var(--mut)}
-.stars{letter-spacing:2px;color:var(--gold)}
-.boss{--c:#ff5470}
-.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:18px;margin:14px 0;box-shadow:0 4px 0 var(--line)}
-.back{background:none;border:0;color:var(--p);font:700 15px Nunito;cursor:pointer;padding:6px 0}
-.pt{display:flex;gap:10px;margin:10px 0}.pt .ic{font-size:22px;flex:none}
-code,pre{background:var(--code);border-radius:8px;font-family:ui-monospace,Menlo,monospace;font-size:14px}
-code{padding:1px 6px}pre{padding:10px 12px;overflow-x:auto;margin:6px 0}
-.btn{background:var(--p);color:#fff;border:0;border-radius:16px;padding:12px 22px;font:800 17px 'Baloo 2';cursor:pointer;box-shadow:0 5px 0 #4a30c4;margin-top:8px}
-.btn:active{transform:translateY(3px);box-shadow:0 2px 0 #4a30c4}
-.btn.alt{background:var(--card);color:var(--p);border:2px solid var(--p);box-shadow:0 4px 0 var(--line)}
-.opt{display:block;width:100%;text-align:left;margin:10px 0;padding:13px 16px;border-radius:16px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 16px Nunito;cursor:pointer;box-shadow:0 4px 0 var(--line)}
-.opt:hover:not(:disabled){border-color:var(--p)}
-.opt.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 20%,var(--card))}
-.opt.bad{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 20%,var(--card))}
-.fb{padding:12px 14px;border-radius:14px;margin-top:10px;font-weight:700}
-.fb.good{background:color-mix(in srgb,var(--ok) 18%,var(--card))}.fb.bad{background:color-mix(in srgb,var(--bad) 18%,var(--card))}
-.hud{display:flex;justify-content:space-between;align-items:center;font-weight:800}
-.big{font-size:64px;text-align:center}
-table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}th,td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:right}th{color:var(--mut)}
-.conf{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:9}
-.conf span{position:absolute;top:-30px;font-size:26px;animation:fall 2.4s linear forwards}
-@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.2}}
-@media (prefers-reduced-motion:reduce){.conf span{animation:none;display:none}.bar i{transition:none}}
-button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+<html lang="id">
 
-body:before,body:after{content:"";position:fixed;width:46vmax;height:46vmax;border-radius:50%;filter:blur(70px);opacity:.35;z-index:-1;animation:drift 18s ease-in-out infinite alternate;pointer-events:none}
-body:before{background:#7c5cff;top:-20vmax;left:-15vmax}body:after{background:#00c2ff;bottom:-22vmax;right:-15vmax;animation-delay:-9s}
-@keyframes drift{to{transform:translate(8vmax,6vmax)}}
-.mas{font-size:72px;animation:bob 2.4s ease-in-out infinite}@keyframes bob{50%{transform:translateY(-10px) rotate(-5deg)}}
-.node.cur{animation:pulse 1.6s infinite}@keyframes pulse{50%{box-shadow:0 5px 0 var(--c),0 0 0 9px color-mix(in srgb,var(--c) 28%,transparent)}}
-.dots{display:flex;gap:6px;margin:8px 0 14px}.dots i{flex:1;height:8px;border-radius:9px;background:var(--line)}.dots i.on{background:var(--p)}
-.slide{background:var(--card);border:3px solid var(--c);border-radius:26px;padding:22px;box-shadow:0 7px 0 var(--c);min-height:190px;animation:pop .35s}
-@keyframes pop{from{transform:scale(.96);opacity:0}}
-.slide.an{background:linear-gradient(135deg,color-mix(in srgb,var(--c) 24%,var(--card)),var(--card))}
-.slide.mem{background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 32%,var(--card)),var(--card))}
-.sic{font-size:48px;line-height:1.1}.sb{font-size:17px;line-height:1.7}.slide h3{font-size:22px;margin:4px 0 6px}
-.nav{display:flex;justify-content:space-between;gap:10px;margin-top:16px}.lt{font-size:26px}
-.btn:disabled{opacity:.35;cursor:not-allowed}
-input[type=range]{width:100%;accent-color:var(--p)}
-.in{width:100%;padding:8px 10px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 16px Nunito;margin:4px 0 10px}
-@media (prefers-reduced-motion:reduce){*,:before,:after{animation:none!important}}
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Numerik Quest</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f3efff;
+            --bg2: #e2f6ff;
+            --card: #fff;
+            --ink: #1d1740;
+            --mut: #6a6490;
+            --line: #d9d2f5;
+            --p: #6c4cff;
+            --ok: #12b886;
+            --bad: #ff5470;
+            --gold: #ffb703;
+            --code: #f0ebff;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
 
-.wrap{max-width:960px}
-.hero{display:flex;gap:22px;align-items:center;text-align:left;padding:8px 4px 18px}.hero .mas{font-size:88px}.hero p{margin:6px 0 4px;max-width:520px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}.stats div{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:12px;text-align:center;box-shadow:0 4px 0 var(--line)}.stats b{display:block;font:800 24px 'Baloo 2'}.stats small,.mut{color:var(--mut)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px}
-.grid .node{width:100%;align-self:stretch;min-height:118px}.grid .node.boss{grid-column:1/-1}
-.nt{display:flex;flex-direction:column;gap:2px}
-.lay{display:block}.side{display:none}
-@media(min-width:800px){.lay{display:grid;grid-template-columns:230px 1fr;gap:22px;align-items:start}.side{display:flex;flex-direction:column;gap:8px;position:sticky;top:90px}.dots{display:none}}
-.st{display:flex;gap:10px;align-items:center;text-align:left;padding:10px 12px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);font:700 14px Nunito;cursor:pointer}.st span{width:28px;text-align:center;flex:none}.st.cur{border-color:var(--c);background:color-mix(in srgb,var(--c) 18%,var(--card))}.st.dn{opacity:.7}
-.qw{max-width:720px;margin:0 auto}
-.qbar{height:10px;background:var(--code);border-radius:9px;overflow:hidden;margin:6px 0 12px}.qbar i{display:block;height:100%;background:var(--ok);transition:width .4s}
-.chip{background:var(--card);border:2px solid var(--line);border-radius:99px;padding:2px 12px}
-.lt2{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:9px;background:var(--code);margin-right:10px;font-weight:800}
-@media(max-width:560px){.hero{flex-direction:column;text-align:center}.stats b{font-size:19px}}
+        @media (prefers-color-scheme:dark) {
+            :root:not([data-theme="light"]) {
+                --bg: #150f2e;
+                --bg2: #0b2a3c;
+                --card: #241a4d;
+                --ink: #f1edff;
+                --mut: #a79fd6;
+                --line: #3b2f75;
+                --code: #32266b
+            }
+        }
 
-*{-webkit-tap-highlight-color:transparent}button{touch-action:manipulation}
-.btn,.opt,.st,.back{min-height:44px}
-.back{display:inline-flex;align-items:center;gap:8px;margin:0 0 12px;padding:8px 18px 8px 12px;border-radius:99px;border:1.5px solid var(--line);background:color-mix(in srgb,var(--card) 72%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:var(--ink);font:700 14px Nunito;letter-spacing:.2px;box-shadow:0 2px 12px rgba(80,60,160,.14);transition:border-color .2s,color .2s,transform .2s}
-.back .ar{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--p);color:#fff;font-size:17px;line-height:1;padding-bottom:2px}
-.back:hover{border-color:var(--p);color:var(--p);transform:translateX(-2px)}.back:active{transform:scale(.96)}
-.hud .back{margin:0}
-.node:active:not(:disabled),.opt:active:not(:disabled),.st:active{transform:scale(.98)}
-@media(hover:none){.node:hover{transform:none}}
-@media(max-width:640px){
-.wrap{padding:6px 12px calc(104px + env(safe-area-inset-bottom,0px))}
-.top{border-radius:16px;padding:8px 12px;gap:8px;margin:4px 0 14px}.rank{font-size:15px}.xp{font-size:12px}
-.hero{padding:0 0 14px;gap:6px}.hero .mas{font-size:64px}.hero h1{font-size:32px}.hero p{font-size:15px}
-.stats{gap:8px;margin-bottom:16px}.stats div{padding:10px 4px;border-radius:16px}.stats b{font-size:18px}.stats small{font-size:11px}
-.grid{grid-template-columns:1fr;gap:12px}.grid .node{min-height:96px}
-.lt{font-size:22px;margin-bottom:6px}
-.slide{padding:18px;border-radius:22px;min-height:0}.sb{font-size:16px}.sic{font-size:40px}
-.nav{position:fixed;left:0;right:0;bottom:0;z-index:6;margin:0;gap:10px;padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--card) 88%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:2px solid var(--line)}
-.nav .btn{flex:1;margin:0;padding:12px 8px;font-size:16px}
-.opt{padding:14px;border-radius:18px}
-#fb .btn,.card>.btn{width:100%}
-.card{padding:16px;border-radius:20px}
-.hud{gap:8px}
-}
-</style></head><body><div class="wrap" id="app"></div>
-<script>
-const L=[
-{id:1,e:'📈',t:'Fungsi & Turunan',d:'Akar, gradien, sekan, turunan',c:'#7c5cff',
-pts:[],
-q:[['Akar dari f(x) = x² − 4 adalah…','x = −2 dan x = 2','x = 4','x = 0','x = −4 dan 4','Akar = f(x)=0 → (x−2)(x+2)=0, jadi x=−2 atau 2.'],['Gradien sekan f(x)=x²−4 lewat A(1,−3) dan B(3,5)?','4','2','8','−4','(5−(−3))/(3−1) = 8/2 = 4.'],['Turunan dari 3x² + 2x − 5 adalah…','6x + 2','6x − 5','3x + 2','6x² + 2','Pangkat jadi pengali, pangkat dikurangi 1; konstanta −5 hilang.']]},
-{id:2,e:'🎯',t:'Analisis Galat',d:'Eksak, hampiran, toleransi',c:'#00a8e8',
-pts:[],
-q:[['Acuan √2 = 1,41421356, hampiran 1,41. Galat absolutnya?','0,00421356','1,41421356','0,01','0,0421356','|1,41421356 − 1,41| = 0,00421356.'],['Kapan galat relatif tidak bisa dihitung?','Saat nilai acuan = 0','Saat hampiran = 0','Saat galat absolut = 0','Saat toleransi = 0','Rumusnya dibagi |acuan|, jadi acuan 0 = bagi nol.'],['6,4876 ke 2 angka di belakang koma: dibulatkan vs dipotong?','6,49 dan 6,48','6,48 dan 6,49','6,49 dan 6,49','6,48 dan 6,48','Digit berikutnya 7 (≥5) → naik saat dibulatkan; dipotong langsung dibuang.']]},
-{id:3,e:'✂️',t:'Metode Bisection',d:'Belah interval berulang',c:'#12b886',bis:1,
-pts:[],
-q:[['Syarat awal Bisection pada [a, b]?','f(a)·f(b) < 0','f(a)·f(b) > 0','f(a) = f(b)','f(a) + f(b) = 0','Beda tanda + kontinu → kurva pasti memotong sumbu-x.'],['f(x)=x³−x−2 pada [1,2], titik tengah c iterasi 1?','1,5','1','2','1,75','c = (1+2)/2 = 1,5.'],['Apa arti U = (b − a)/2?','Batas maksimum tebakan meleset dari akar','Nilai f(c)','Akar sebenarnya','Jumlah iterasi','U berasal dari lebar interval, bukan dari nilai fungsi.']]},
-{id:4,e:'🚀',t:'Metode Newton',d:'Garis singgung menuju akar',c:'#ff8a00',
-pts:[],
-q:[['Rumus iterasi Newton?','xₙ₊₁ = xₙ − f(xₙ)/f′(xₙ)','xₙ₊₁ = xₙ + f(xₙ)/f′(xₙ)','xₙ₊₁ = (a+b)/2','xₙ₊₁ = xₙ − f′(xₙ)/f(xₙ)','Dari gradien garis singgung dua titik, lalu diselesaikan untuk xₙ₊₁.'],['f′(xₙ)=0 tapi f(xₙ)≠0. Apa yang terjadi?','Langkah tak bisa dihitung (bagi nol)','Akar ketemu','Newton makin cepat','Hasil otomatis 0','Pembagi nol dilarang; ganti tebakan awal.'],['Kapan Newton berhenti (menurut ringkasan)?','δ ≤ ε dan R ≤ ε keduanya','Cukup δ ≤ ε','Cukup R ≤ ε','Setelah tepat 3 iterasi','Perubahan kecil bukan galat sejati, jadi dua pemeriksaan dipakai bareng.']]},
-{id:5,e:'🧩',t:'Eliminasi Gauss',d:'SPL → segitiga atas',c:'#ff5fa2',
-pts:[],
-q:[['Pengali m untuk menghilangkan koefisien di bawah pivot?','Koefisien yang dihilangkan ÷ pivot','Pivot ÷ koefisien','Koefisien × pivot','Selalu 1','R₂ ← R₂ − m·R₁ dengan m = a₂₁/a₁₁.'],['Hasil akhir eliminasi Gauss lalu langkah berikutnya?','Segitiga atas, lalu substitusi mundur','Matriks identitas, langsung baca','Segitiga bawah, substitusi maju','Matriks nol','Gauss berhenti di segitiga atas.'],['Dari 5z=15 dan y+2z=8, berapa y?','2','3','8','1','z=3 → y = 8 − 2(3) = 2.']]},
-{id:6,e:'💎',t:'Gauss–Jordan',d:'Sampai matriks identitas',c:'#7c5cff',
-pts:[],
-q:[['Bentuk akhir Gauss–Jordan?','RREF (matriks identitas di kiri)','Segitiga atas','Segitiga bawah','Matriks nol','Itu pembeda utamanya dari Gauss.'],['Baris [0 0 5 | 15] dinormalisasi (÷5) jadi?','[0 0 1 | 3]','[0 0 1 | 15]','[0 0 5 | 3]','[0 0 0 | 3]','Ruas kanan ikut dibagi: 15/5 = 3.'],['Keunggulan Gauss–Jordan dibanding Gauss?','Solusi dibaca langsung, tanpa substitusi mundur','Tidak butuh pivot','Selalu lebih sedikit langkah','Tidak perlu dicek balik','Cek balik ke persamaan awal tetap wajib.']]}
-];
-const X={
-1:{an:'Bayangin kamu naik motor. Kecepatan rata-rata satu perjalanan itu beda dengan angka di speedometer <b>saat ini juga</b>. Nah, turunan itu speedometer-nya: kecuramannya di satu titik, bukan rata-rata.',mem:'Akar = f(x) nol · Gradien = naik ÷ maju · Turunan = gradien tepat di satu titik · pangkat turun jadi pengali.'},
-2:{an:'Kamu bilang tinggimu 170 cm, padahal aslinya 170,4. Meleset 0,4 itu namanya <b>galat</b>. Buat tinggi badan sih kecil, tapi kalau itu ukuran kuku, parah banget. Makanya kita juga ngitung galat <b>relatif</b>.',mem:'Galat absolut = selisih · relatif = selisih ÷ nilai asli · persen = relatif × 100 · acuan 0 = nggak bisa dihitung.'},
-3:{an:'Pernah main tebak angka? Tebak 50, dibilang "kurang tinggi", jadi separuh bawah dicoret. Bisection begitu juga, cuma yang dicoret itu <b>daerah yang pasti nggak ada akarnya</b>.',mem:'Ujung kiri dan kanan beda tanda · titik tengah c · U = (b − a) ÷ 2 · kalau U sudah kecil, selesai.'},
-4:{an:'Bayangin kamu turun bukit gelap. Kamu raba kemiringan tanah di kakimu, terus melangkah ke arah yang datar. Newton begitu: <b>raba kemiringan (turunan), lalu meluncur ke sumbu-x</b>. Ulangi sampai pas.',mem:'Tebakan baru = lama − f ÷ f′ · berhenti kalau δ dan R sama-sama kecil · awas turunan 0.'},
-5:{an:'Kayak teka-teki detektif: beberapa petunjuk harus benar sekaligus. Eliminasi Gauss <b>menyingkirkan variabel satu per satu</b> sampai tinggal satu yang gampang dihitung, lalu kamu naik lagi ke atas.',mem:'Tulis matriks · nolin angka di bawah diagonal · baca dari bawah ke atas · cek lagi di soal.'},
-6:{an:'Gauss itu nyusun tangga sampai atap, terus turun pelan-pelan. Gauss–Jordan <b>sekalian beres-beres</b> sampai tiap baris cuma berisi satu variabel. Jawabannya tinggal dibaca.',mem:'Pivot jadi 1 · nolin angka di atas dan bawah pivot · hasilnya identitas · jawaban langsung kebaca.'}};
-const P={
-1:[['🎯','Akar itu maksudnya apa?','Bayangin sebuah rumus yang kalau kamu isi angka, dia ngasih angka lain. Misalnya f(x) = x² − 4. Kalau x diisi 3, hasilnya 9 − 4 = 5. Kalau x diisi 2, hasilnya 4 − 4 = 0.<br><br>Nah, x yang bikin hasilnya <b>nol</b> itu namanya akar. Jadi 2 adalah akar. −2 juga akar, karena (−2)² − 4 = 0. Di grafik, akar itu titik tempat kurva menyentuh garis datar (sumbu-x). Singkatnya: akar = jawaban dari pertanyaan "x berapa supaya hasilnya nol?"'],
-['📐','Gradien: seberapa miring garisnya','Bayangin tangga. Ada yang landai, ada yang curam. Kecuramannya bisa diukur: berapa tinggi kamu naik, dibagi berapa jauh kamu melangkah ke depan.<br><br>Contoh garis y = 2x + 1. Dari titik (0, 1) ke titik (2, 5): naik 4, maju 2. Jadi 4 ÷ 2 = 2. Itu gradiennya. Artinya, tiap maju 1 langkah kamu naik 2.'],
-['✂️','Garis sekan: miringnya di antara dua titik','Di kurva, kemiringannya berubah-ubah, jadi kita nggak bisa bilang "kurva ini miringnya sekian". Yang bisa kita lakukan: pilih dua titik, tarik garis lurus lewat keduanya, lalu hitung miringnya seperti tadi.<br><br>Contoh f(x) = x² − 4. Titik A di x = 1 (tingginya −3), titik B di x = 3 (tingginya 5). Naiknya 5 − (−3) = 8, majunya 3 − 1 = 2. Jadi miringnya 4. Itu garis sekan, dan angka 4 cuma kemiringan <i>rata-rata</i> dari A ke B.'],
-['⚡','Turunan, tinggal satu langkah lagi','Gimana kalau kita mau tahu miringnya <i>tepat di titik A saja</i>? Caranya: geser titik B pelan-pelan mendekat ke A. Makin dekat, kemiringan garisnya makin mendekati satu angka tertentu. Angka itu adalah turunan di A.<br><br>(B nggak boleh benar-benar sama dengan A, karena jaraknya jadi nol dan kita harus bagi dengan nol. Jadi dekat sekali, tapi jangan nempel.)<br><br>Kabar baiknya, ada jalan pintas: pangkatnya turun jadi pengali, lalu pangkatnya dikurangi 1. x² jadi 2x. Jadi di x = 1, turunannya 2 × 1 = 2. Di langkah berikutnya, coba geser slider dan lihat angkanya mendekati 2.']],
-2:[['🔍','Kenapa hasil hitungan bisa meleset?','Kalau kamu tekan √2 di kalkulator, keluar 1,41421356… dan angkanya nggak ada habisnya. Padahal kita nggak mungkin nulis angka tanpa ujung, jadi kita potong, misalnya jadi 1,41. Angka potongan itu disebut <b>hampiran</b>. Yang paling tepat disebut nilai eksak atau acuan.<br><br>Pasti ada selisihnya, kan? Selisih itulah yang disebut <b>galat</b>. Di metode numerik kita hampir selalu dapat hampiran, jadi kita harus bisa mengukur seberapa meleset, lalu menilai itu sudah cukup bagus atau belum.'],
-['🧮','Cara ngitung galat, pakai contoh','Pakai contoh tadi: acuan 1,41421356, hampiran 1,41.<br><br>Galat absolut = selisihnya aja: 1,41421356 − 1,41 = 0,00421356.<br>Galat relatif = galat absolut dibagi acuan: 0,00421356 ÷ 1,41421356 ≈ 0,00298.<br>Galat persen = galat relatif × 100, jadi sekitar 0,298%.<br><br>Ketiganya menceritakan hal yang sama dengan cara berbeda. Yang absolut bilang "meleset berapa", yang persen bilang "meleset berapa persen dari ukuran aslinya".'],
-['⚖️','Kenapa butuh galat relatif?','Bayangin dua kasus. Pertama: harusnya 2, kamu dapat 1. Kedua: harusnya 1.000.000, kamu dapat 999.999. Dua-duanya meleset 1. Tapi yang pertama parah banget (meleset setengahnya!), yang kedua hampir nggak terasa.<br><br>Galat absolut nggak bisa membedakan keduanya. Galat relatif bisa, karena meleset-nya dibandingin dengan besar nilai aslinya.<br><br>Tapi ada jebakan: kalau nilai aslinya 0, kamu harus bagi dengan 0. Itu nggak boleh, jadi galat relatif nggak bisa dipakai. Di spreadsheet keluarnya #DIV/0!.'],
-['✅','Toleransi dan pembulatan','Toleransi itu batas meleset yang kamu setujui. Misalnya kamu bilang "meleset 0,01 masih oke". Galat 0,0042 lebih kecil dari 0,01, jadi hampirannya diterima. Tapi kalau toleransinya 0,001, belum cukup, harus diperbaiki.<br><br>Satu lagi, bedain pembulatan dan pemotongan. Angka 6,4876 mau dibuat 2 angka di belakang koma. Dibulatkan: lihat angka berikutnya (7). Karena 5 atau lebih, angka sebelumnya naik jadi 6,49. Dipotong: sisanya dibuang aja, jadi 6,48.']],
-3:[['🎲','Idenya mirip tebak angka','Kamu pasti pernah main tebak angka 1 sampai 100. Teman bilang "tebak!", kamu jawab 50. Dia bilang "kurang tinggi". Sekarang kamu tahu angkanya ada di 51 sampai 100, jadi 1 sampai 50 kamu buang. Tebak lagi 75, dan seterusnya. Tiap tebakan, daerah pencarianmu jadi setengahnya.<br><br>Bisection persis begitu, tapi yang dicari adalah akar dari sebuah persamaan (x yang bikin f(x) = 0).'],
-['📋','Kapan boleh pakai Bisection?','Kamu perlu dua titik, sebut a (kiri) dan b (kanan), yang nilai fungsinya <b>beda tanda</b>: satu positif, satu negatif.<br><br>Kenapa? Bayangin kamu jalan di jalan yang nyambung. Di kiri kamu ada di atas permukaan laut, di kanan kamu di bawahnya. Pasti ada satu titik di antaranya yang tepat di permukaan laut (nol). Syaratnya, jalannya nggak boleh putus.<br><br>Contoh f(x) = x³ − x − 2. f(1) = −2 (negatif), f(2) = 4 (positif). Beda tanda, jadi aman: akarnya ada di antara 1 dan 2.'],
-['🔁','Langkah tiap putaran','Lanjut contoh tadi, daerahnya [1, 2].<br><br>1) Ambil titik tengah: c = (1 + 2) ÷ 2 = 1,5.<br>2) Hitung f(1,5) = 3,375 − 1,5 − 2 = −0,125 (negatif).<br>3) f(1) juga negatif, jadi 1 dan 1,5 sama-sama negatif. Akarnya pasti bukan di situ. Akarnya ada di antara 1,5 dan 2 (beda tanda).<br>4) Daerah barunya jadi [1,5; 2]. Ulangi.<br><br>Aturan singkatnya: buang separuh yang kedua ujungnya sama tanda.'],
-['🛑','Kapan berhenti?','Kita nggak bakal pas di akarnya, jadi kita perlu tahu "udah cukup dekat belum". Caranya pakai U, yaitu setengah dari lebar daerah: U = (b − a) ÷ 2. Artinya, tebakanmu paling banter meleset sejauh U dari akar yang sebenarnya.<br><br>Tiap putaran lebar daerahnya jadi setengah, jadi U juga: 0,5 → 0,25 → 0,125 → dan seterusnya. Kalau U sudah ≤ toleransi (misalnya 0,01), berhenti. Di contoh ini terjadi di putaran ke-7, dengan akar sekitar 1,523.<br><br>Awas ketuker: U itu jarak ke akar. Nilai f(c) bukan jarak, itu cuma tinggi kurva di titik c.']],
-4:[['🏹','Idenya: pakai garis singgung','Misalnya kamu mau cari akar, dan kamu punya tebakan awal. Tebakan itu hampir pasti meleset. Tapi kamu bisa lihat kurvanya di titik itu: miring ke arah mana?<br><br>Tarik garis lurus yang menempel di kurva tepat di titik tebakanmu (garis singgung). Garis itu menyentuh sumbu-x di suatu tempat. Pindah ke sana dan jadikan itu tebakan baru. Biasanya titik itu jauh lebih dekat ke akar. Ulangi terus.<br><br>Beda sama Bisection yang membelah daerah, Newton "meluncur" mengikuti kemiringan. Makanya dia butuh turunan (ingat, turunan = kemiringan).'],
-['🧮','Rumusnya dari mana sih?','Rumusnya kelihatan menakutkan, tapi isinya sederhana:<br><code>x baru = x lama − f(x lama) ÷ f′(x lama)</code><br><br>Bacanya begini: f(x lama) itu tinggi kurva di tebakanmu, dan f′ itu kemiringannya. Tinggi dibagi kemiringan = jarak mendatar yang harus kamu geser supaya sampai di sumbu-x. Makanya itu dikurangkan dari tebakan lama.'],
-['🔢','Contoh hitungan: cari √2','Kita cari akar dari f(x) = x² − 2 (itu √2). Turunannya 2x. Mulai dari tebakan 1,5.<br><br>f(1,5) = 2,25 − 2 = 0,25. f′(1,5) = 3. Tebakan baru = 1,5 − 0,25 ÷ 3 = 1,4167.<br>Ulangi dengan 1,4167: f = 0,0069 dan f′ = 2,8333. Tebakan baru = 1,4167 − 0,0069 ÷ 2,8333 = 1,4142.<br><br>1,4142 itu sudah √2. Cuma 3 putaran! Itu kenapa Newton terkenal cepat.'],
-['🛑','Kapan berhenti, dan apa yang bisa salah?','Kita periksa dua hal. δ = seberapa jauh tebakan bergeser dibanding sebelumnya. R = nilai mutlak f di tebakan baru (seberapa dekat ke nol). Berhenti kalau keduanya ≤ ε. Di tugas, ε = 0,0001. Dua-duanya perlu karena satu aja bisa menipu.<br><br>Yang bisa bikin gagal: kalau kemiringan f′ = 0, kamu harus bagi nol, jadi stop dan ganti tebakan awal. Tebakan awal yang jelek juga bisa bikin tebakan baru loncat jauh. Batasi maksimal 20 putaran; kalau belum memenuhi, tulis "belum memenuhi kriteria", jangan bilang berhasil.']],
-5:[['🧱','SPL itu apa?','SPL = sistem persamaan linear. Gampangnya: beberapa teka-teki angka yang harus terpenuhi bersamaan.<br><br>Contoh kecil: x + y = 5 dan 2x + y = 7. Kurangkan persamaan pertama dari yang kedua, ketemu x = 2. Lalu 2 + y = 5, jadi y = 3.<br><br>Dengan 2 persamaan masih gampang. Dengan 3 atau lebih, kita butuh cara yang rapi. Itulah eliminasi Gauss.'],
-['📝','Menulisnya sebagai matriks','Biar rapi, kita buang huruf x, y, z dan cuma tulis angkanya, satu persamaan per baris:<br><code>x + y + z = 6 → [1 1 1 | 6]</code><br><code>2x − y + z = 3 → [2 −1 1 | 3]</code><br><code>x + 2y + 3z = 14 → [1 2 3 | 14]</code><br><br>Urutan kolomnya: x, y, z, lalu ruas kanan. Kalau ada variabel yang nggak muncul, tulis 0. Ini disebut matriks augmented.'],
-['🔧','Boleh ngapain di baris?','Ada tiga hal yang aman dilakukan karena nggak mengubah jawaban: tukar dua baris, kalikan satu baris dengan angka (bukan nol), atau tambahkan kelipatan satu baris ke baris lain. Semuanya dilakukan ke seluruh baris, termasuk angka di ruas kanan.<br><br>Tujuannya: bikin angka di bawah diagonal jadi 0. Contoh: baris 2 itu [2 −1 1 | 3], dan kita mau angka 2-nya jadi 0. Kurangkan 2 kali baris 1 ([1 1 1 | 6]), hasilnya [0 −3 −1 | −9]. Angka 2 yang dikali itu disebut pengali (angka yang mau dihilangkan ÷ pivot di baris atas).'],
-['🔺','Terus jawabannya dari mana?','Setelah semua angka di bawah diagonal jadi 0, bentuknya seperti segitiga. Misalnya baris paling bawah jadi [0 0 5 | 15]. Artinya 5z = 15, jadi z = 3.<br><br>Naik ke baris atasnya: y + 2z = 8. Karena z = 3, y = 8 − 6 = 2. Naik lagi: x + y + z = 6, jadi x = 6 − 2 − 3 = 1.<br><br>Ini namanya substitusi mundur. Terakhir, masukkan x = 1, y = 2, z = 3 ke soal awal untuk memastikan. Kalau pivotnya ketemu 0, tukar baris dengan baris di bawahnya. Jangan pernah bagi dengan nol.']],
-6:[['🏁','Bedanya sama Gauss','Di Gauss, kamu berhenti di bentuk segitiga, lalu masih harus ngitung dari bawah ke atas. Gauss–Jordan lebih rajin: lanjut membersihkan matriks sampai sisi kirinya cuma berisi angka 1 di diagonal dan 0 di tempat lain (disebut matriks identitas).<br><br>Hasilnya, tiap baris isinya satu variabel saja, dan jawabannya langsung kelihatan di kolom paling kanan, tanpa substitusi mundur.'],
-['🪜','Caranya, lanjut dari segitiga tadi','Kita lanjut dari hasil Gauss tadi:<br><code>[1 1 1 | 6]</code><br><code>[0 1 2 | 8]</code><br><code>[0 0 5 | 15]</code><br><br>Langkah 1: bikin angka 5 jadi 1 dengan membagi seluruh baris 3 dengan 5 (angka 15 di kanan ikut dibagi), jadi [0 0 1 | 3]. Sudah kelihatan z = 3.<br><br>Langkah 2: pakai baris 3 ini untuk membersihkan angka z di atasnya. Baris 2 dikurangi 2 kali baris 3, jadi [0 1 0 | 2], dan y = 2.<br><br>Langkah 3: baris 1 dikurangi baris 3, lalu dikurangi baris 2, jadi [1 0 0 | 1], dan x = 1.'],
-['📌','Pola yang gampang diingat','Semua langkahnya punya pola yang sama: baris baru = baris lama − (angka yang mau dinolkan) × baris pivot. Bagi baris pivot dulu sampai pivotnya 1, supaya "angka yang mau dinolkan" langsung jadi pengali.<br><br>Terakhir, selalu cek balik jawabanmu ke persamaan awal. Di tugas spreadsheet, pastikan kamu menyimpan <b>rumusnya</b>, bukan cuma hasil akhir, kalau nggak tugasnya nggak dinilai. Tanda $ dipakai untuk mengunci sel pengali supaya nggak bergeser saat disalin.']]};
-const W={
-1:['Akar itu x yang bikin f(x) = 0. Faktorkan: (x − 2)(x + 2) = 0, jadi x = 2 atau x = −2.','Naiknya (5 − (−3)) = 8, majunya (3 − 1) = 2. Jadi 8 ÷ 2 = 4.','Pangkat turun jadi pengali: 3x² jadi 6x, 2x jadi 2, dan angka −5 hilang. Hasilnya 6x + 2.'],
-2:['Tinggal dikurangi: 1,41421356 − 1,41 = 0,00421356. Selisih mentah aja.','Galat relatif dibagi nilai acuan. Kalau acuannya 0, jadi bagi nol, dan itu nggak boleh.','Dibulatkan: lihat digit berikutnya (7, jadi naik) → 6,49. Dipotong: langsung dibuang → 6,48.'],
-3:['Kalau tanda di ujung kiri dan kanan beda, kurva pasti nyebrang sumbu-x di antaranya.','Titik tengahnya tinggal (1 + 2) ÷ 2 = 1,5.','U itu jarak paling jauh tebakanmu dari akar, dihitung dari lebar interval. Bukan nilai fungsinya.'],
-4:['Rumus ini datang dari garis singgung: tebakan baru = tebakan lama dikurangi nilai fungsi dibagi kemiringan.','Kemiringannya nol, jadi kamu harus bagi dengan nol, dan itu nggak bisa. Ganti tebakan awalnya.','Perubahan kecil aja belum menjamin akurat, jadi cek dua-duanya: δ dan R harus sama-sama ≤ ε.'],
-5:['Pengali = angka yang mau dinolkan dibagi pivot. Contoh: 2 ÷ 1 = 2, jadi R₂ − 2R₁.','Gauss berhenti di segitiga atas, lalu kamu hitung dari bawah ke atas (substitusi mundur).','Dari z = 3: y + 2(3) = 8, jadi y = 8 − 6 = 2.'],
-6:['Gauss–Jordan lanjut sampai sisi kiri jadi matriks identitas (RREF).','Bagi seluruh baris dengan 5, ruas kanan ikut: 15 ÷ 5 = 3. Jadi [0 0 1 | 3].','Jawabannya langsung kebaca dari matriks identitas, nggak perlu hitung mundur. Tapi tetap cek balik ya.']};
-L.forEach(l=>{l.pts=P[l.id];l.q.forEach((q,i)=>{q[5]=W[l.id][i]})});
-const RANKS=['Pemula Hitung 🐣','Pemburu Akar 🏹','Penakluk Galat 🛡️','Master Matriks 🧙','Legenda Numerik 👑'];
-let S={xp:0,st:{}},V={v:'map'};
-try{const s=localStorage.getItem('nq');if(s)S=JSON.parse(s)}catch(e){}
-const save=()=>{try{localStorage.setItem('nq',JSON.stringify(S))}catch(e){}};
-const $=document.getElementById('app');
-const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-const sh=a=>a.map(x=>[Math.random(),x]).sort((a,b)=>a[0]-b[0]).map(x=>x[1]);
-const done=()=>L.filter(l=>S.st[l.id]>0).length;
-const rk=()=>Math.min(RANKS.length-1,Math.floor(S.xp/100));
-function hdr(){const r=rk(),n=(S.xp%100);return `<div class="top"><span class="rank">${RANKS[r]}</span><div class="bar"><i style="width:${r==4?100:n}%"></i></div><span class="xp">⭐ ${S.xp} XP</span></div>`}
-function stars(n){return n?'★'.repeat(n)+'☆'.repeat(3-n):'☆☆☆'}
-function map(){V.v='map';const cur=L.findIndex(l=>!S.st[l.id]),sr=L.reduce((a,l)=>a+(S.st[l.id]||0),0),ac=S.n?Math.round(S.c/S.n*100)+'%':'—';
-let h=hdr()+`<div class="hero"><div class="mas">🦉</div><div><h1>Numerik Quest</h1><p>Belajar Metode Numerik P1–P6 lewat level, bintang, dan bos akhir.</p></div></div><div class="stats"><div><b>${done()}/6</b><small>Level selesai</small></div><div><b>${sr}/18 ★</b><small>Bintang</small></div><div><b>${ac}</b><small>Akurasi jawaban</small></div></div><div class="grid">`;
-L.forEach((l,i)=>{const lock=i>0&&!S.st[L[i-1].id];h+=`<button class="node${i==cur?' cur':''}" style="--c:${l.c}" ${lock?'disabled':''} onclick="lesson(${l.id})"><span class="em">${lock?'🔒':l.e}</span><span class="nt"><small>Pertemuan ${l.id}${S.st[l.id]?' · selesai':i==cur?' · berikutnya':''}</small><b>${l.t}</b><small>${l.d}</small><span class="stars">${stars(S.st[l.id]||0)}</span></span></button>`});
-const bl=done()<6;h+=`<button class="node boss" ${bl?'disabled':''} onclick="boss()"><span class="em" style="background:#ff5470">${bl?'🔒':'🐉'}</span><span class="nt"><small>Bos akhir</small><b>Naga Galat</b><small>8 soal acak dari semua materi</small><span class="stars">${stars(S.st[7]||0)}</span></span></button></div>`;$.innerHTML=h}
-let bi,LS;
-const tbl=(h,r)=>'<div style="overflow-x:auto"><table><tr>'+h.map(x=>`<th>${x}</th>`).join('')+'</tr>'+r.map(x=>'<tr>'+x.map(y=>`<td>${y}</td>`).join('')+'</tr>').join('')+'</table></div>';
-const n4=x=>x.toFixed(4).replace('.',','),$i=id=>document.getElementById(id);
-function t1(h){h=+h;const fx=x=>x*x-4,sx=x=>20+x*90,sy=y=>200-(y+4)*22,m=(fx(1+h)-fx(1))/h;let p='';for(let x=0;x<=3.2;x+=.1)p+=sx(x)+','+sy(fx(x))+' ';
-$i('t1').innerHTML=`<svg viewBox="0 0 320 240" style="width:100%;background:var(--code);border-radius:14px"><polyline points="${p}" fill="none" stroke="#7c5cff" stroke-width="3"/><line x1="${sx(0)}" y1="${sy(-3-m)}" x2="${sx(3.2)}" y2="${sy(-3+m*2.2)}" stroke="#ff5470" stroke-width="2"/><circle cx="${sx(1)}" cy="${sy(-3)}" r="6" fill="#12b886"/><circle cx="${sx(1+h)}" cy="${sy(fx(1+h))}" r="6" fill="#ffb703"/></svg><p><b>Δx = ${h.toFixed(2)}</b> → gradien sekan = <b>${m.toFixed(2)}</b>. Makin kecil Δx, makin dekat ke <b>f′(1) = 2</b> 🎯</p>`}
-function t2(){const a=+$i('ia').value,b=+$i('ib').value,e=Math.abs(a-b);$i('t2').innerHTML=`<p>Eₐ = <b>${+e.toFixed(8)}</b><br>Eᵣ = <b>${a?+(e/Math.abs(a)).toFixed(8):'❌ tak bisa (acuan = 0)'}</b><br>E% = <b>${a?+(e/Math.abs(a)*100).toFixed(6)+'%':'—'}</b></p>`}
-let nw;function nreset(){nw={x:1.5,r:[],ok:0};dn()}
-function nstep(){if(nw.ok||nw.r.length>=6)return;const x=nw.x,fx=x*x-2,d=2*x,y=x-fx/d,dl=Math.abs(y-x),R=Math.abs(y*y-2),c=v=>v.toFixed(6).replace('.',',');nw.r.push([nw.r.length,n4(x),n4(fx),n4(d),n4(y),c(dl),c(R)]);nw.x=y;nw.ok=dl<=1e-4&&R<=1e-4;dn()}
-function dn(){$i('nt').innerHTML=(nw.r.length?tbl(['n','xₙ','f','f′','xₙ₊₁','δ','R'],nw.r):'')+(nw.ok?'<div class="fb good">δ dan R ≤ 0,0001 → berhenti! Akar ≈ √2 🎉</div>':'')}
-const MT={5:[['Matriks awal',[[1,1,1,6],[2,-1,1,3],[1,2,3,14]]],['R₂←R₂−2R₁ dan R₃←R₃−R₁',[[1,1,1,6],[0,-3,-1,-9],[0,1,2,8]]],['Tukar R₂↔R₃',[[1,1,1,6],[0,1,2,8],[0,-3,-1,-9]]],['R₃←R₃+3R₂ → segitiga atas ✅',[[1,1,1,6],[0,1,2,8],[0,0,5,15]]],['Substitusi mundur: z=3 → y=2 → x=1 🎉',[[1,1,1,6],[0,1,2,8],[0,0,5,15]]]],
-6:[['Mulai dari hasil Gauss',[[1,1,1,6],[0,1,2,8],[0,0,5,15]]],['R₃←R₃/5 (normalisasi pivot)',[[1,1,1,6],[0,1,2,8],[0,0,1,3]]],['R₂←R₂−2R₃',[[1,1,1,6],[0,1,0,2],[0,0,1,3]]],['R₁←R₁−R₃',[[1,1,0,3],[0,1,0,2],[0,0,1,3]]],['R₁←R₁−R₂ → identitas! x=1, y=2, z=3 🎉',[[1,0,0,1],[0,1,0,2],[0,0,1,3]]]]};
-let mi=0,mk=5;
-function mdraw(){const[c,m]=MT[mk][mi];$i('mx').innerHTML=`<div class="fb">${c}</div><pre>${m.map(r=>'[ '+r.slice(0,3).map(v=>String(v).padStart(2)).join('  ')+' | '+String(r[3]).padStart(2)+' ]').join('\n')}</pre>`}
-function mstep(d){mi=Math.max(0,Math.min(MT[mk].length-1,mi+d));mdraw()}
-const mxh=`<p>Klik Maju untuk lihat satu operasi baris per langkah.</p><div id="mx"></div><button class="btn alt" onclick="mstep(-1)">← Mundur</button> <button class="btn alt" onclick="mstep(1)">Maju →</button>`;
-const T={
-1:[`<p>Geser slider ini untuk mendekatkan titik kuning (B) ke titik hijau (A). Garis merah = sekan. Perhatiin angka gradiennya!</p><input type="range" min="0.05" max="2" step="0.05" value="2" oninput="t1(this.value)"><div id="t1"></div>`,()=>t1(2)],
-2:[`<p>Coba ganti angkanya, lihat galatnya ikut berubah. Coba juga isi acuan dengan 0!</p>Acuan<input class="in" id="ia" type="number" step="any" value="1.41421356" oninput="t2()">Hampiran<input class="in" id="ib" type="number" step="any" value="1.41" oninput="t2()"><div id="t2"></div>`,t2],
-3:[`<p>x³ − x − 2 pada [1, 2]. Tebak sisi yang ada akarnya (kiri atau kanan) sampai U ≤ 0,01.</p><div id="bt"></div><button class="btn alt" onclick="breset()">Ulang</button>`,()=>breset()],
-4:[`<p>Kita cari √2 dari tebakan awal 1,5. Klik terus dan lihat tebakannya makin dekat.</p><div id="nt"></div><button class="btn alt" onclick="nstep()">Iterasi berikutnya 🚀</button> <button class="btn alt" onclick="nreset()">Ulang</button>`,nreset],
-5:[mxh,()=>{mk=5;mi=0;mdraw()}],6:[mxh,()=>{mk=6;mi=0;mdraw()}]};
-function lesson(id){const l=L.find(x=>x.id==id),x=X[id],t=T[id];LS={l,i:0,s:[['💡','Bayangin dulu',x.an],...l.pts,['🎮','Coba sendiri!',t[0],t[1]],['🧠','Ingat ini!',x.mem]]};slide()}
-function slide(){V.v='lesson';const{l,i,s}=LS,p=s[i],last=i==s.length-1,lab=(q,k)=>k==0?'Analogi':k==s.length-1?'Ingat ini':q[3]?'Coba sendiri':(q[1]||q[2].replace(/<[^>]+>/g,' ').split(/[:.=(?]/)[0].trim().slice(0,24));
-$.innerHTML=hdr()+`<button class="back" onclick="map()"><span class="ar">‹</span> Peta</button><h2 class="lt">${l.e} P${l.id} · ${l.t}</h2><div class="dots">${s.map((_,k)=>`<i class="${k<=i?'on':''}"></i>`).join('')}</div><div class="lay"><div class="side">${s.map((q,k)=>`<button class="st${k==i?' cur':''}${k<i?' dn':''}" style="--c:${l.c}" onclick="LS.i=${k};slide()"><span>${k<i?'✓':q[0]}</span>${lab(q,k)}</button>`).join('')}</div><div><div class="slide ${i==0?'an':last?'mem':''}" style="--c:${l.c}"><div class="sic">${p[0]}</div>${p[1]?`<h3>${p[1]}</h3>`:''}<div class="sb">${p[2]}</div></div><div class="nav"><button class="btn alt" ${i?'':'disabled'} onclick="LS.i--;slide()">← Balik</button>${last?`<button class="btn" onclick="quiz(${l.id})">Mulai Quiz ⚔️</button>`:`<button class="btn" onclick="LS.i++;slide()">Lanjut →</button>`}</div></div></div>`;
-if(p[3])p[3]();window.scrollTo(0,0)}
-const f=x=>x*x*x-x-2;
-function bshow(msg){const{a,b}=bi,c=(a+b)/2,u=(b-a)/2;$i('bt').innerHTML=(bi.rows.length?tbl(['iter','a','b','c','f(c)','U'],bi.rows.map(x=>[x[0],...x.slice(1).map(n4)])):'')+(u<=0.01?`<div class="fb good">U ≤ 0,01 → berhenti 🎉 akar ≈ ${n4(c)}</div>`:`<div class="fb">Iterasi ${bi.rows.length+1}: interval [${n4(a)}; ${n4(b)}], c = ${n4(c)}, f(c) = ${n4(f(c))}. Di mana akarnya?</div><button class="btn alt" onclick="bpick(0)">Di kiri [a, c]</button> <button class="btn alt" onclick="bpick(1)">Di kanan [c, b]</button>`)+(msg||'')+'<br><button class="btn alt" onclick="breset()">Ulang</button>'}
-function bpick(r){const{a,b}=bi,c=(a+b)/2,right=f(a)*f(c)>0?1:0;if(r!=right){bshow('<div class="fb bad">Hmm, belum pas. Coba cek tandanya lagi: kalau f(a)·f(c) &lt; 0 akarnya di kiri, kalau &gt; 0 di kanan.</div>');return}bi.rows.push([bi.rows.length+1,a,b,c,f(c),(b-a)/2]);if(right)bi.a=c;else bi.b=c;bshow()}
-function breset(){bi={a:1,b:2,rows:[]};bshow()}
-let Q;
-function quiz(id){const l=L.find(x=>x.id==id);Q={id,qs:sh(l.q),i:0,h:3,ok:0,c:l.c};ask()}
-function boss(){const all=L.flatMap(l=>l.q);Q={id:7,qs:sh(all).slice(0,8),i:0,h:4,ok:0,c:'#ff5470'};ask()}
-function ask(){V.v='quiz';const q=Q.qs[Q.i],o=sh(q.slice(1,5).map((t,k)=>[t,k==0]));Q.cur={o,q};
-$.innerHTML=hdr()+`<div class="qw"><div class="hud"><button class="back" onclick="map()"><span class="ar">✕</span> Keluar</button><span>${'❤️'.repeat(Math.max(0,Q.h))||'💔'}</span><span class="chip">🔥 Combo ${Q.cb||0}</span></div><div class="qbar"><i style="width:${Q.i/Q.qs.length*100}%"></i></div><div class="card" style="border-color:${Q.c}"><small class="mut">Soal ${Q.i+1} dari ${Q.qs.length} · tekan 1–4 untuk menjawab</small><h3>${esc(q[0])}</h3><div id="os">${o.map((x,k)=>`<button class="opt" onclick="pick(${k})"><span class="lt2">${'ABCD'[k]}</span>${esc(x[0])}</button>`).join('')}</div><div id="fb"></div></div></div>`;window.scrollTo(0,0)}
-function pick(k){const{o,q}=Q.cur,right=o[k][1],first=!S.st[Q.id];let bn=0;
-document.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(o[j][1])b.classList.add('good');else if(j==k)b.classList.add('bad')});
-if(right){Q.ok++;Q.cb=(Q.cb||0)+1;if(first){S.xp+=10;if(Q.cb>=3){S.xp+=5;bn=1}}}else{Q.h--;Q.cb=0}
-S.n=(S.n||0)+1;S.c=(S.c||0)+(right?1:0);save();
-const last=Q.i==Q.qs.length-1||Q.h<=0;
-$i('fb').innerHTML=`<div class="fb ${right?'good':'bad'}">${right?'🎉 Benar!'+(first?' +10 XP':'')+(bn?' · combo +5 🔥':''):'😅 Yah, belum pas. Tenang, ini penjelasannya:'}<br><span style="font-weight:500">${q[5]}</span></div><button class="btn" onclick="${last?'fin()':'Q.i++;ask()'}">${last?'Lihat hasil':'Lanjut'} (Enter)</button>`}
-function fin(){const win=Q.h>0,n=win?Math.max(1,Math.min(3,Q.h-(Q.id==7?1:0))):0;
-let bonus=0;if(win){if(!S.st[Q.id])bonus=Q.id==7?50:20;S.xp+=bonus;S.st[Q.id]=Math.max(S.st[Q.id]||0,n)}save();
-$.innerHTML=hdr()+`<div class="card" style="text-align:center;max-width:560px;margin:14px auto"><div class="big">${win?(Q.id==7?'👑':'🏆'):'😵'}</div><h2>${win?(Q.id==7?'Naga Galat dikalahkan!':'Level selesai!'):'Hati habis!'}</h2><p class="stars" style="font-size:34px;margin:6px 0">${stars(n)}</p><p>${Q.ok}/${Q.qs.length} benar${bonus?` · bonus +${bonus} XP`:''}</p>${win?'':'<p style="color:var(--mut)">Baca ulang materinya, lalu coba lagi.</p>'}<button class="btn" onclick="${Q.id==7?'boss()':'quiz('+Q.id+')'}">Main lagi</button> <button class="btn alt" onclick="${win||Q.id==7?'map()':'lesson('+Q.id+')'}">${win||Q.id==7?'Ke peta':'Baca materi'}</button></div>`;if(win)conf()}
-function conf(){const d=document.createElement('div');d.className='conf';d.innerHTML=Array.from({length:30},()=>`<span style="left:${Math.random()*100}%;animation-delay:${Math.random()*.8}s">${['🎉','⭐','✨','💎','🔥'][Math.random()*5|0]}</span>`).join('');document.body.appendChild(d);setTimeout(()=>d.remove(),3500)}
-document.addEventListener('keydown',e=>{if(/INPUT|TEXTAREA/.test(e.target.tagName))return;
-if(V.v=='lesson'){if(e.key=='ArrowRight'&&LS.i<LS.s.length-1){LS.i++;slide()}if(e.key=='ArrowLeft'&&LS.i>0){LS.i--;slide()}}
-else if(V.v=='quiz'){const k='1234abcd'.indexOf(e.key.toLowerCase());if(k>=0){const b=document.querySelectorAll('.opt')[k%4];if(b)b.click()}
-if(e.key=='Enter'&&e.target.tagName!='BUTTON'){const n=document.querySelector('#fb .btn');if(n)n.click()}}});
-map();
-</script></body></html>
+        :root[data-theme="dark"] {
+            --bg: #150f2e;
+            --bg2: #0b2a3c;
+            --card: #241a4d;
+            --ink: #f1edff;
+            --mut: #a79fd6;
+            --line: #3b2f75;
+            --code: #32266b
+        }
+
+        html {
+            scroll-padding-top: env(safe-area-inset-top, 0px)
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(160deg, var(--bg), var(--bg2)) fixed;
+            color: var(--ink);
+            font-family: Nunito, system-ui, sans-serif;
+            font-size: 16px;
+            line-height: 1.55
+        }
+
+        h1,
+        h2,
+        h3,
+        .dsp {
+            font-family: 'Baloo 2', system-ui, sans-serif;
+            margin: 0;
+            line-height: 1.15
+        }
+
+        .wrap {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 12px 16px 60px
+        }
+
+        .top {
+            position: sticky;
+            top: env(safe-area-inset-top, 0px);
+            z-index: 5;
+            background: var(--card);
+            border: 2px solid var(--line);
+            border-radius: 20px;
+            padding: 10px 14px;
+            margin: 8px 0 18px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            box-shadow: 0 4px 0 var(--line)
+        }
+
+        .rank {
+            font-weight: 800;
+            font-family: 'Baloo 2';
+            font-size: 18px
+        }
+
+        .bar {
+            flex: 1;
+            min-width: 120px;
+            height: 14px;
+            background: var(--code);
+            border-radius: 99px;
+            overflow: hidden
+        }
+
+        .bar i {
+            display: block;
+            height: 100%;
+            background: linear-gradient(90deg, var(--p), #00c2ff);
+            border-radius: 99px;
+            transition: width .6s
+        }
+
+        .xp {
+            font-weight: 700;
+            color: var(--mut);
+            font-size: 14px
+        }
+
+        .hero {
+            text-align: center;
+            padding: 10px 0 6px
+        }
+
+        .hero h1 {
+            font-size: clamp(34px, 8vw, 54px);
+            font-weight: 800;
+            background: linear-gradient(90deg, #6c4cff, #00b4ff, #ff5fa2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent
+        }
+
+        .hero p {
+            color: var(--mut);
+            margin: 6px auto 0;
+            max-width: 460px
+        }
+
+        .path {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            margin-top: 22px
+        }
+
+        .path:before {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            bottom: 20px;
+            border-left: 4px dashed var(--line);
+            transform: translateX(-2px)
+        }
+
+        .node {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: min(78%, 360px);
+            padding: 12px 14px;
+            border-radius: 22px;
+            background: var(--card);
+            border: 3px solid var(--c);
+            box-shadow: 0 5px 0 var(--c);
+            cursor: pointer;
+            text-align: left;
+            font: inherit;
+            color: inherit;
+            transition: transform .15s
+        }
+
+        .node:nth-child(odd) {
+            align-self: flex-start
+        }
+
+        .node:nth-child(even) {
+            align-self: flex-end
+        }
+
+        .node:hover:not(:disabled) {
+            transform: translateY(-3px)
+        }
+
+        .node:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            filter: grayscale(.7)
+        }
+
+        .node .em {
+            font-size: 34px;
+            width: 56px;
+            height: 56px;
+            display: grid;
+            place-items: center;
+            background: var(--c);
+            border-radius: 18px;
+            flex: none
+        }
+
+        .node b {
+            display: block;
+            font-family: 'Baloo 2';
+            font-size: 18px
+        }
+
+        .node small {
+            color: var(--mut)
+        }
+
+        .stars {
+            letter-spacing: 2px;
+            color: var(--gold)
+        }
+
+        .boss {
+            --c: #ff5470
+        }
+
+        .card {
+            background: var(--card);
+            border: 2px solid var(--line);
+            border-radius: 22px;
+            padding: 18px;
+            margin: 14px 0;
+            box-shadow: 0 4px 0 var(--line)
+        }
+
+        .back {
+            background: none;
+            border: 0;
+            color: var(--p);
+            font: 700 15px Nunito;
+            cursor: pointer;
+            padding: 6px 0
+        }
+
+        .pt {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0
+        }
+
+        .pt .ic {
+            font-size: 22px;
+            flex: none
+        }
+
+        code,
+        pre {
+            background: var(--code);
+            border-radius: 8px;
+            font-family: ui-monospace, Menlo, monospace;
+            font-size: 14px
+        }
+
+        code {
+            padding: 1px 6px
+        }
+
+        pre {
+            padding: 10px 12px;
+            overflow-x: auto;
+            margin: 6px 0
+        }
+
+        .btn {
+            background: var(--p);
+            color: #fff;
+            border: 0;
+            border-radius: 16px;
+            padding: 12px 22px;
+            font: 800 17px 'Baloo 2';
+            cursor: pointer;
+            box-shadow: 0 5px 0 #4a30c4;
+            margin-top: 8px
+        }
+
+        .btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #4a30c4
+        }
+
+        .btn.alt {
+            background: var(--card);
+            color: var(--p);
+            border: 2px solid var(--p);
+            box-shadow: 0 4px 0 var(--line)
+        }
+
+        .opt {
+            display: block;
+            width: 100%;
+            text-align: left;
+            margin: 10px 0;
+            padding: 13px 16px;
+            border-radius: 16px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            font: 700 16px Nunito;
+            cursor: pointer;
+            box-shadow: 0 4px 0 var(--line)
+        }
+
+        .opt:hover:not(:disabled) {
+            border-color: var(--p)
+        }
+
+        .opt.good {
+            border-color: var(--ok);
+            background: color-mix(in srgb, var(--ok) 20%, var(--card))
+        }
+
+        .opt.bad {
+            border-color: var(--bad);
+            background: color-mix(in srgb, var(--bad) 20%, var(--card))
+        }
+
+        .fb {
+            padding: 12px 14px;
+            border-radius: 14px;
+            margin-top: 10px;
+            font-weight: 700
+        }
+
+        .fb.good {
+            background: color-mix(in srgb, var(--ok) 18%, var(--card))
+        }
+
+        .fb.bad {
+            background: color-mix(in srgb, var(--bad) 18%, var(--card))
+        }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 800
+        }
+
+        .big {
+            font-size: 64px;
+            text-align: center
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            margin: 8px 0
+        }
+
+        th,
+        td {
+            padding: 5px 6px;
+            border-bottom: 1px solid var(--line);
+            text-align: right
+        }
+
+        th {
+            color: var(--mut)
+        }
+
+        .conf {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 9
+        }
+
+        .conf span {
+            position: absolute;
+            top: -30px;
+            font-size: 26px;
+            animation: fall 2.4s linear forwards
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(540deg);
+                opacity: .2
+            }
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+            .conf span {
+                animation: none;
+                display: none
+            }
+
+            .bar i {
+                transition: none
+            }
+        }
+
+        button:focus-visible {
+            outline: 3px solid var(--gold);
+            outline-offset: 2px
+        }
+
+        body:before,
+        body:after {
+            content: "";
+            position: fixed;
+            width: 46vmax;
+            height: 46vmax;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: .35;
+            z-index: -1;
+            animation: drift 18s ease-in-out infinite alternate;
+            pointer-events: none
+        }
+
+        body:before {
+            background: #7c5cff;
+            top: -20vmax;
+            left: -15vmax
+        }
+
+        body:after {
+            background: #00c2ff;
+            bottom: -22vmax;
+            right: -15vmax;
+            animation-delay: -9s
+        }
+
+        @keyframes drift {
+            to {
+                transform: translate(8vmax, 6vmax)
+            }
+        }
+
+        .mas {
+            font-size: 72px;
+            animation: bob 2.4s ease-in-out infinite
+        }
+
+        @keyframes bob {
+            50% {
+                transform: translateY(-10px) rotate(-5deg)
+            }
+        }
+
+        .node.cur {
+            animation: pulse 1.6s infinite
+        }
+
+        @keyframes pulse {
+            50% {
+                box-shadow: 0 5px 0 var(--c), 0 0 0 9px color-mix(in srgb, var(--c) 28%, transparent)
+            }
+        }
+
+        .dots {
+            display: flex;
+            gap: 6px;
+            margin: 8px 0 14px
+        }
+
+        .dots i {
+            flex: 1;
+            height: 8px;
+            border-radius: 9px;
+            background: var(--line)
+        }
+
+        .dots i.on {
+            background: var(--p)
+        }
+
+        .slide {
+            background: var(--card);
+            border: 3px solid var(--c);
+            border-radius: 26px;
+            padding: 22px;
+            box-shadow: 0 7px 0 var(--c);
+            min-height: 190px;
+            animation: pop .35s
+        }
+
+        @keyframes pop {
+            from {
+                transform: scale(.96);
+                opacity: 0
+            }
+        }
+
+        .slide.an {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--c) 24%, var(--card)), var(--card))
+        }
+
+        .slide.mem {
+            background: linear-gradient(135deg, color-mix(in srgb, var(--gold) 32%, var(--card)), var(--card))
+        }
+
+        .sic {
+            font-size: 48px;
+            line-height: 1.1
+        }
+
+        .sb {
+            font-size: 17px;
+            line-height: 1.7
+        }
+
+        .slide h3 {
+            font-size: 22px;
+            margin: 4px 0 6px
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 16px
+        }
+
+        .lt {
+            font-size: 26px
+        }
+
+        .btn:disabled {
+            opacity: .35;
+            cursor: not-allowed
+        }
+
+        input[type=range] {
+            width: 100%;
+            accent-color: var(--p)
+        }
+
+        .in {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            font: 700 16px Nunito;
+            margin: 4px 0 10px
+        }
+
+        @media (prefers-reduced-motion:reduce) {
+
+            *,
+            :before,
+            :after {
+                animation: none !important
+            }
+        }
+
+        .wrap {
+            max-width: 960px
+        }
+
+        .hero {
+            display: flex;
+            gap: 22px;
+            align-items: center;
+            text-align: left;
+            padding: 8px 4px 18px
+        }
+
+        .hero .mas {
+            font-size: 88px
+        }
+
+        .hero p {
+            margin: 6px 0 4px;
+            max-width: 520px
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 22px
+        }
+
+        .stats div {
+            background: var(--card);
+            border: 2px solid var(--line);
+            border-radius: 18px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 4px 0 var(--line)
+        }
+
+        .stats b {
+            display: block;
+            font: 800 24px 'Baloo 2'
+        }
+
+        .stats small,
+        .mut {
+            color: var(--mut)
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 16px
+        }
+
+        .grid .node {
+            width: 100%;
+            align-self: stretch;
+            min-height: 118px
+        }
+
+        .grid .node.boss {
+            grid-column: 1/-1
+        }
+
+        .nt {
+            display: flex;
+            flex-direction: column;
+            gap: 2px
+        }
+
+        .lay {
+            display: block
+        }
+
+        .side {
+            display: none
+        }
+
+        @media(min-width:800px) {
+            .lay {
+                display: grid;
+                grid-template-columns: 230px 1fr;
+                gap: 22px;
+                align-items: start
+            }
+
+            .side {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                position: sticky;
+                top: 90px
+            }
+
+            .dots {
+                display: none
+            }
+        }
+
+        .st {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            text-align: left;
+            padding: 10px 12px;
+            border-radius: 14px;
+            border: 2px solid var(--line);
+            background: var(--card);
+            color: var(--ink);
+            font: 700 14px Nunito;
+            cursor: pointer
+        }
+
+        .st span {
+            width: 28px;
+            text-align: center;
+            flex: none
+        }
+
+        .st.cur {
+            border-color: var(--c);
+            background: color-mix(in srgb, var(--c) 18%, var(--card))
+        }
+
+        .st.dn {
+            opacity: .7
+        }
+
+        .qw {
+            max-width: 720px;
+            margin: 0 auto
+        }
+
+        .qbar {
+            height: 10px;
+            background: var(--code);
+            border-radius: 9px;
+            overflow: hidden;
+            margin: 6px 0 12px
+        }
+
+        .qbar i {
+            display: block;
+            height: 100%;
+            background: var(--ok);
+            transition: width .4s
+        }
+
+        .chip {
+            background: var(--card);
+            border: 2px solid var(--line);
+            border-radius: 99px;
+            padding: 2px 12px
+        }
+
+        .lt2 {
+            display: inline-grid;
+            place-items: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 9px;
+            background: var(--code);
+            margin-right: 10px;
+            font-weight: 800
+        }
+
+        @media(max-width:560px) {
+            .hero {
+                flex-direction: column;
+                text-align: center
+            }
+
+            .stats b {
+                font-size: 19px
+            }
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent
+        }
+
+        button {
+            touch-action: manipulation
+        }
+
+        .btn,
+        .opt,
+        .st,
+        .back {
+            min-height: 44px
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 12px;
+            padding: 8px 18px 8px 12px;
+            border-radius: 99px;
+            border: 1.5px solid var(--line);
+            background: color-mix(in srgb, var(--card) 72%, transparent);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            color: var(--ink);
+            font: 700 14px Nunito;
+            letter-spacing: .2px;
+            box-shadow: 0 2px 12px rgba(80, 60, 160, .14);
+            transition: border-color .2s, color .2s, transform .2s
+        }
+
+        .back .ar {
+            display: grid;
+            place-items: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--p);
+            color: #fff;
+            font-size: 17px;
+            line-height: 1;
+            padding-bottom: 2px
+        }
+
+        .back:hover {
+            border-color: var(--p);
+            color: var(--p);
+            transform: translateX(-2px)
+        }
+
+        .back:active {
+            transform: scale(.96)
+        }
+
+        .hud .back {
+            margin: 0
+        }
+
+        .node:active:not(:disabled),
+        .opt:active:not(:disabled),
+        .st:active {
+            transform: scale(.98)
+        }
+
+        @media(hover:none) {
+            .node:hover {
+                transform: none
+            }
+        }
+
+        @media(max-width:640px) {
+            .wrap {
+                padding: 6px 12px calc(104px + env(safe-area-inset-bottom, 0px))
+            }
+
+            .top {
+                border-radius: 16px;
+                padding: 8px 12px;
+                gap: 8px;
+                margin: 4px 0 14px
+            }
+
+            .rank {
+                font-size: 15px
+            }
+
+            .xp {
+                font-size: 12px
+            }
+
+            .hero {
+                padding: 0 0 14px;
+                gap: 6px
+            }
+
+            .hero .mas {
+                font-size: 64px
+            }
+
+            .hero h1 {
+                font-size: 32px
+            }
+
+            .hero p {
+                font-size: 15px
+            }
+
+            .stats {
+                gap: 8px;
+                margin-bottom: 16px
+            }
+
+            .stats div {
+                padding: 10px 4px;
+                border-radius: 16px
+            }
+
+            .stats b {
+                font-size: 18px
+            }
+
+            .stats small {
+                font-size: 11px
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 12px
+            }
+
+            .grid .node {
+                min-height: 96px
+            }
+
+            .lt {
+                font-size: 22px;
+                margin-bottom: 6px
+            }
+
+            .slide {
+                padding: 18px;
+                border-radius: 22px;
+                min-height: 0
+            }
+
+            .sb {
+                font-size: 16px
+            }
+
+            .sic {
+                font-size: 40px
+            }
+
+            .nav {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 6;
+                margin: 0;
+                gap: 10px;
+                padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+                background: color-mix(in srgb, var(--card) 88%, transparent);
+                -webkit-backdrop-filter: blur(14px);
+                backdrop-filter: blur(14px);
+                border-top: 2px solid var(--line)
+            }
+
+            .nav .btn {
+                flex: 1;
+                margin: 0;
+                padding: 12px 8px;
+                font-size: 16px
+            }
+
+            .opt {
+                padding: 14px;
+                border-radius: 18px
+            }
+
+            #fb .btn,
+            .card>.btn {
+                width: 100%
+            }
+
+            .card {
+                padding: 16px;
+                border-radius: 20px
+            }
+
+            .hud {
+                gap: 8px
+            }
+        }
+
+        .vis {
+            background: color-mix(in srgb, var(--code) 70%, var(--card));
+            border: 2px dashed var(--line);
+            border-radius: 18px;
+            padding: 8px;
+            margin: 8px 0 14px
+        }
+
+        .sv {
+            width: 100%;
+            height: auto;
+            display: block
+        }
+
+        .sv text {
+            fill: var(--ink);
+            font-family: Nunito, sans-serif;
+            font-weight: 700
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap" id="app"></div>
+    <script>
+        const L = [
+            {
+                id: 1, e: '📈', t: 'Fungsi & Turunan', d: 'Akar, gradien, sekan, turunan', c: '#7c5cff',
+                pts: [],
+                q: [['Akar dari f(x) = x² − 4 adalah…', 'x = −2 dan x = 2', 'x = 4', 'x = 0', 'x = −4 dan 4', 'Akar = f(x)=0 → (x−2)(x+2)=0, jadi x=−2 atau 2.'], ['Gradien sekan f(x)=x²−4 lewat A(1,−3) dan B(3,5)?', '4', '2', '8', '−4', '(5−(−3))/(3−1) = 8/2 = 4.'], ['Turunan dari 3x² + 2x − 5 adalah…', '6x + 2', '6x − 5', '3x + 2', '6x² + 2', 'Pangkat jadi pengali, pangkat dikurangi 1; konstanta −5 hilang.']]
+            },
+            {
+                id: 2, e: '🎯', t: 'Analisis Galat', d: 'Eksak, hampiran, toleransi', c: '#00a8e8',
+                pts: [],
+                q: [['Acuan √2 = 1,41421356, hampiran 1,41. Galat absolutnya?', '0,00421356', '1,41421356', '0,01', '0,0421356', '|1,41421356 − 1,41| = 0,00421356.'], ['Kapan galat relatif tidak bisa dihitung?', 'Saat nilai acuan = 0', 'Saat hampiran = 0', 'Saat galat absolut = 0', 'Saat toleransi = 0', 'Rumusnya dibagi |acuan|, jadi acuan 0 = bagi nol.'], ['6,4876 ke 2 angka di belakang koma: dibulatkan vs dipotong?', '6,49 dan 6,48', '6,48 dan 6,49', '6,49 dan 6,49', '6,48 dan 6,48', 'Digit berikutnya 7 (≥5) → naik saat dibulatkan; dipotong langsung dibuang.']]
+            },
+            {
+                id: 3, e: '✂️', t: 'Metode Bisection', d: 'Belah interval berulang', c: '#12b886', bis: 1,
+                pts: [],
+                q: [['Syarat awal Bisection pada [a, b]?', 'f(a)·f(b) < 0', 'f(a)·f(b) > 0', 'f(a) = f(b)', 'f(a) + f(b) = 0', 'Beda tanda + kontinu → kurva pasti memotong sumbu-x.'], ['f(x)=x³−x−2 pada [1,2], titik tengah c iterasi 1?', '1,5', '1', '2', '1,75', 'c = (1+2)/2 = 1,5.'], ['Apa arti U = (b − a)/2?', 'Batas maksimum tebakan meleset dari akar', 'Nilai f(c)', 'Akar sebenarnya', 'Jumlah iterasi', 'U berasal dari lebar interval, bukan dari nilai fungsi.']]
+            },
+            {
+                id: 4, e: '🚀', t: 'Metode Newton', d: 'Garis singgung menuju akar', c: '#ff8a00',
+                pts: [],
+                q: [['Rumus iterasi Newton?', 'xₙ₊₁ = xₙ − f(xₙ)/f′(xₙ)', 'xₙ₊₁ = xₙ + f(xₙ)/f′(xₙ)', 'xₙ₊₁ = (a+b)/2', 'xₙ₊₁ = xₙ − f′(xₙ)/f(xₙ)', 'Dari gradien garis singgung dua titik, lalu diselesaikan untuk xₙ₊₁.'], ['f′(xₙ)=0 tapi f(xₙ)≠0. Apa yang terjadi?', 'Langkah tak bisa dihitung (bagi nol)', 'Akar ketemu', 'Newton makin cepat', 'Hasil otomatis 0', 'Pembagi nol dilarang; ganti tebakan awal.'], ['Kapan Newton berhenti (menurut ringkasan)?', 'δ ≤ ε dan R ≤ ε keduanya', 'Cukup δ ≤ ε', 'Cukup R ≤ ε', 'Setelah tepat 3 iterasi', 'Perubahan kecil bukan galat sejati, jadi dua pemeriksaan dipakai bareng.']]
+            },
+            {
+                id: 5, e: '🧩', t: 'Eliminasi Gauss', d: 'SPL → segitiga atas', c: '#ff5fa2',
+                pts: [],
+                q: [['Pengali m untuk menghilangkan koefisien di bawah pivot?', 'Koefisien yang dihilangkan ÷ pivot', 'Pivot ÷ koefisien', 'Koefisien × pivot', 'Selalu 1', 'R₂ ← R₂ − m·R₁ dengan m = a₂₁/a₁₁.'], ['Hasil akhir eliminasi Gauss lalu langkah berikutnya?', 'Segitiga atas, lalu substitusi mundur', 'Matriks identitas, langsung baca', 'Segitiga bawah, substitusi maju', 'Matriks nol', 'Gauss berhenti di segitiga atas.'], ['Dari 5z=15 dan y+2z=8, berapa y?', '2', '3', '8', '1', 'z=3 → y = 8 − 2(3) = 2.']]
+            },
+            {
+                id: 6, e: '💎', t: 'Gauss–Jordan', d: 'Sampai matriks identitas', c: '#7c5cff',
+                pts: [],
+                q: [['Bentuk akhir Gauss–Jordan?', 'RREF (matriks identitas di kiri)', 'Segitiga atas', 'Segitiga bawah', 'Matriks nol', 'Itu pembeda utamanya dari Gauss.'], ['Baris [0 0 5 | 15] dinormalisasi (÷5) jadi?', '[0 0 1 | 3]', '[0 0 1 | 15]', '[0 0 5 | 3]', '[0 0 0 | 3]', 'Ruas kanan ikut dibagi: 15/5 = 3.'], ['Keunggulan Gauss–Jordan dibanding Gauss?', 'Solusi dibaca langsung, tanpa substitusi mundur', 'Tidak butuh pivot', 'Selalu lebih sedikit langkah', 'Tidak perlu dicek balik', 'Cek balik ke persamaan awal tetap wajib.']]
+            }
+        ];
+        const X = {
+            1: { an: 'Bayangin kamu naik motor. Kecepatan rata-rata satu perjalanan itu beda dengan angka di speedometer <b>saat ini juga</b>. Nah, turunan itu speedometer-nya: kecuramannya di satu titik, bukan rata-rata.', mem: 'Akar = f(x) nol · Gradien = naik ÷ maju · Turunan = gradien tepat di satu titik · pangkat turun jadi pengali.' },
+            2: { an: 'Kamu bilang tinggimu 170 cm, padahal aslinya 170,4. Meleset 0,4 itu namanya <b>galat</b>. Buat tinggi badan sih kecil, tapi kalau itu ukuran kuku, parah banget. Makanya kita juga ngitung galat <b>relatif</b>.', mem: 'Galat absolut = selisih · relatif = selisih ÷ nilai asli · persen = relatif × 100 · acuan 0 = nggak bisa dihitung.' },
+            3: { an: 'Pernah main tebak angka? Tebak 50, dibilang "kurang tinggi", jadi separuh bawah dicoret. Bisection begitu juga, cuma yang dicoret itu <b>daerah yang pasti nggak ada akarnya</b>.', mem: 'Ujung kiri dan kanan beda tanda · titik tengah c · U = (b − a) ÷ 2 · kalau U sudah kecil, selesai.' },
+            4: { an: 'Bayangin kamu turun bukit gelap. Kamu raba kemiringan tanah di kakimu, terus melangkah ke arah yang datar. Newton begitu: <b>raba kemiringan (turunan), lalu meluncur ke sumbu-x</b>. Ulangi sampai pas.', mem: 'Tebakan baru = lama − f ÷ f′ · berhenti kalau δ dan R sama-sama kecil · awas turunan 0.' },
+            5: { an: 'Kayak teka-teki detektif: beberapa petunjuk harus benar sekaligus. Eliminasi Gauss <b>menyingkirkan variabel satu per satu</b> sampai tinggal satu yang gampang dihitung, lalu kamu naik lagi ke atas.', mem: 'Tulis matriks · nolin angka di bawah diagonal · baca dari bawah ke atas · cek lagi di soal.' },
+            6: { an: 'Gauss itu nyusun tangga sampai atap, terus turun pelan-pelan. Gauss–Jordan <b>sekalian beres-beres</b> sampai tiap baris cuma berisi satu variabel. Jawabannya tinggal dibaca.', mem: 'Pivot jadi 1 · nolin angka di atas dan bawah pivot · hasilnya identitas · jawaban langsung kebaca.' }
+        };
+        const P = {
+            1: [['🎯', 'Akar itu maksudnya apa?', 'Bayangin sebuah rumus yang kalau kamu isi angka, dia ngasih angka lain. Misalnya f(x) = x² − 4. Kalau x diisi 3, hasilnya 9 − 4 = 5. Kalau x diisi 2, hasilnya 4 − 4 = 0.<br><br>Nah, x yang bikin hasilnya <b>nol</b> itu namanya akar. Jadi 2 adalah akar. −2 juga akar, karena (−2)² − 4 = 0. Di grafik, akar itu titik tempat kurva menyentuh garis datar (sumbu-x). Singkatnya: akar = jawaban dari pertanyaan "x berapa supaya hasilnya nol?"'],
+            ['📐', 'Gradien: seberapa miring garisnya', 'Bayangin tangga. Ada yang landai, ada yang curam. Kecuramannya bisa diukur: berapa tinggi kamu naik, dibagi berapa jauh kamu melangkah ke depan.<br><br>Contoh garis y = 2x + 1. Dari titik (0, 1) ke titik (2, 5): naik 4, maju 2. Jadi 4 ÷ 2 = 2. Itu gradiennya. Artinya, tiap maju 1 langkah kamu naik 2.'],
+            ['✂️', 'Garis sekan: miringnya di antara dua titik', 'Di kurva, kemiringannya berubah-ubah, jadi kita nggak bisa bilang "kurva ini miringnya sekian". Yang bisa kita lakukan: pilih dua titik, tarik garis lurus lewat keduanya, lalu hitung miringnya seperti tadi.<br><br>Contoh f(x) = x² − 4. Titik A di x = 1 (tingginya −3), titik B di x = 3 (tingginya 5). Naiknya 5 − (−3) = 8, majunya 3 − 1 = 2. Jadi miringnya 4. Itu garis sekan, dan angka 4 cuma kemiringan <i>rata-rata</i> dari A ke B.'],
+            ['⚡', 'Turunan, tinggal satu langkah lagi', 'Gimana kalau kita mau tahu miringnya <i>tepat di titik A saja</i>? Caranya: geser titik B pelan-pelan mendekat ke A. Makin dekat, kemiringan garisnya makin mendekati satu angka tertentu. Angka itu adalah turunan di A.<br><br>(B nggak boleh benar-benar sama dengan A, karena jaraknya jadi nol dan kita harus bagi dengan nol. Jadi dekat sekali, tapi jangan nempel.)<br><br>Kabar baiknya, ada jalan pintas: pangkatnya turun jadi pengali, lalu pangkatnya dikurangi 1. x² jadi 2x. Jadi di x = 1, turunannya 2 × 1 = 2. Di langkah berikutnya, coba geser slider dan lihat angkanya mendekati 2.']],
+            2: [['🔍', 'Kenapa hasil hitungan bisa meleset?', 'Kalau kamu tekan √2 di kalkulator, keluar 1,41421356… dan angkanya nggak ada habisnya. Padahal kita nggak mungkin nulis angka tanpa ujung, jadi kita potong, misalnya jadi 1,41. Angka potongan itu disebut <b>hampiran</b>. Yang paling tepat disebut nilai eksak atau acuan.<br><br>Pasti ada selisihnya, kan? Selisih itulah yang disebut <b>galat</b>. Di metode numerik kita hampir selalu dapat hampiran, jadi kita harus bisa mengukur seberapa meleset, lalu menilai itu sudah cukup bagus atau belum.'],
+            ['🧮', 'Cara ngitung galat, pakai contoh', 'Pakai contoh tadi: acuan 1,41421356, hampiran 1,41.<br><br>Galat absolut = selisihnya aja: 1,41421356 − 1,41 = 0,00421356.<br>Galat relatif = galat absolut dibagi acuan: 0,00421356 ÷ 1,41421356 ≈ 0,00298.<br>Galat persen = galat relatif × 100, jadi sekitar 0,298%.<br><br>Ketiganya menceritakan hal yang sama dengan cara berbeda. Yang absolut bilang "meleset berapa", yang persen bilang "meleset berapa persen dari ukuran aslinya".'],
+            ['⚖️', 'Kenapa butuh galat relatif?', 'Bayangin dua kasus. Pertama: harusnya 2, kamu dapat 1. Kedua: harusnya 1.000.000, kamu dapat 999.999. Dua-duanya meleset 1. Tapi yang pertama parah banget (meleset setengahnya!), yang kedua hampir nggak terasa.<br><br>Galat absolut nggak bisa membedakan keduanya. Galat relatif bisa, karena meleset-nya dibandingin dengan besar nilai aslinya.<br><br>Tapi ada jebakan: kalau nilai aslinya 0, kamu harus bagi dengan 0. Itu nggak boleh, jadi galat relatif nggak bisa dipakai. Di spreadsheet keluarnya #DIV/0!.'],
+            ['✅', 'Toleransi dan pembulatan', 'Toleransi itu batas meleset yang kamu setujui. Misalnya kamu bilang "meleset 0,01 masih oke". Galat 0,0042 lebih kecil dari 0,01, jadi hampirannya diterima. Tapi kalau toleransinya 0,001, belum cukup, harus diperbaiki.<br><br>Satu lagi, bedain pembulatan dan pemotongan. Angka 6,4876 mau dibuat 2 angka di belakang koma. Dibulatkan: lihat angka berikutnya (7). Karena 5 atau lebih, angka sebelumnya naik jadi 6,49. Dipotong: sisanya dibuang aja, jadi 6,48.']],
+            3: [['🎲', 'Idenya mirip tebak angka', 'Kamu pasti pernah main tebak angka 1 sampai 100. Teman bilang "tebak!", kamu jawab 50. Dia bilang "kurang tinggi". Sekarang kamu tahu angkanya ada di 51 sampai 100, jadi 1 sampai 50 kamu buang. Tebak lagi 75, dan seterusnya. Tiap tebakan, daerah pencarianmu jadi setengahnya.<br><br>Bisection persis begitu, tapi yang dicari adalah akar dari sebuah persamaan (x yang bikin f(x) = 0).'],
+            ['📋', 'Kapan boleh pakai Bisection?', 'Kamu perlu dua titik, sebut a (kiri) dan b (kanan), yang nilai fungsinya <b>beda tanda</b>: satu positif, satu negatif.<br><br>Kenapa? Bayangin kamu jalan di jalan yang nyambung. Di kiri kamu ada di atas permukaan laut, di kanan kamu di bawahnya. Pasti ada satu titik di antaranya yang tepat di permukaan laut (nol). Syaratnya, jalannya nggak boleh putus.<br><br>Contoh f(x) = x³ − x − 2. f(1) = −2 (negatif), f(2) = 4 (positif). Beda tanda, jadi aman: akarnya ada di antara 1 dan 2.'],
+            ['🔁', 'Langkah tiap putaran', 'Lanjut contoh tadi, daerahnya [1, 2].<br><br>1) Ambil titik tengah: c = (1 + 2) ÷ 2 = 1,5.<br>2) Hitung f(1,5) = 3,375 − 1,5 − 2 = −0,125 (negatif).<br>3) f(1) juga negatif, jadi 1 dan 1,5 sama-sama negatif. Akarnya pasti bukan di situ. Akarnya ada di antara 1,5 dan 2 (beda tanda).<br>4) Daerah barunya jadi [1,5; 2]. Ulangi.<br><br>Aturan singkatnya: buang separuh yang kedua ujungnya sama tanda.'],
+            ['🛑', 'Kapan berhenti?', 'Kita nggak bakal pas di akarnya, jadi kita perlu tahu "udah cukup dekat belum". Caranya pakai U, yaitu setengah dari lebar daerah: U = (b − a) ÷ 2. Artinya, tebakanmu paling banter meleset sejauh U dari akar yang sebenarnya.<br><br>Tiap putaran lebar daerahnya jadi setengah, jadi U juga: 0,5 → 0,25 → 0,125 → dan seterusnya. Kalau U sudah ≤ toleransi (misalnya 0,01), berhenti. Di contoh ini terjadi di putaran ke-7, dengan akar sekitar 1,523.<br><br>Awas ketuker: U itu jarak ke akar. Nilai f(c) bukan jarak, itu cuma tinggi kurva di titik c.']],
+            4: [['🏹', 'Idenya: pakai garis singgung', 'Misalnya kamu mau cari akar, dan kamu punya tebakan awal. Tebakan itu hampir pasti meleset. Tapi kamu bisa lihat kurvanya di titik itu: miring ke arah mana?<br><br>Tarik garis lurus yang menempel di kurva tepat di titik tebakanmu (garis singgung). Garis itu menyentuh sumbu-x di suatu tempat. Pindah ke sana dan jadikan itu tebakan baru. Biasanya titik itu jauh lebih dekat ke akar. Ulangi terus.<br><br>Beda sama Bisection yang membelah daerah, Newton "meluncur" mengikuti kemiringan. Makanya dia butuh turunan (ingat, turunan = kemiringan).'],
+            ['🧮', 'Rumusnya dari mana sih?', 'Rumusnya kelihatan menakutkan, tapi isinya sederhana:<br><code>x baru = x lama − f(x lama) ÷ f′(x lama)</code><br><br>Bacanya begini: f(x lama) itu tinggi kurva di tebakanmu, dan f′ itu kemiringannya. Tinggi dibagi kemiringan = jarak mendatar yang harus kamu geser supaya sampai di sumbu-x. Makanya itu dikurangkan dari tebakan lama.'],
+            ['🔢', 'Contoh hitungan: cari √2', 'Kita cari akar dari f(x) = x² − 2 (itu √2). Turunannya 2x. Mulai dari tebakan 1,5.<br><br>f(1,5) = 2,25 − 2 = 0,25. f′(1,5) = 3. Tebakan baru = 1,5 − 0,25 ÷ 3 = 1,4167.<br>Ulangi dengan 1,4167: f = 0,0069 dan f′ = 2,8333. Tebakan baru = 1,4167 − 0,0069 ÷ 2,8333 = 1,4142.<br><br>1,4142 itu sudah √2. Cuma 3 putaran! Itu kenapa Newton terkenal cepat.'],
+            ['🛑', 'Kapan berhenti, dan apa yang bisa salah?', 'Kita periksa dua hal. δ = seberapa jauh tebakan bergeser dibanding sebelumnya. R = nilai mutlak f di tebakan baru (seberapa dekat ke nol). Berhenti kalau keduanya ≤ ε. Di tugas, ε = 0,0001. Dua-duanya perlu karena satu aja bisa menipu.<br><br>Yang bisa bikin gagal: kalau kemiringan f′ = 0, kamu harus bagi nol, jadi stop dan ganti tebakan awal. Tebakan awal yang jelek juga bisa bikin tebakan baru loncat jauh. Batasi maksimal 20 putaran; kalau belum memenuhi, tulis "belum memenuhi kriteria", jangan bilang berhasil.']],
+            5: [['🧱', 'SPL itu apa?', 'SPL = sistem persamaan linear. Gampangnya: beberapa teka-teki angka yang harus terpenuhi bersamaan.<br><br>Contoh kecil: x + y = 5 dan 2x + y = 7. Kurangkan persamaan pertama dari yang kedua, ketemu x = 2. Lalu 2 + y = 5, jadi y = 3.<br><br>Dengan 2 persamaan masih gampang. Dengan 3 atau lebih, kita butuh cara yang rapi. Itulah eliminasi Gauss.'],
+            ['📝', 'Menulisnya sebagai matriks', 'Biar rapi, kita buang huruf x, y, z dan cuma tulis angkanya, satu persamaan per baris:<br><code>x + y + z = 6 → [1 1 1 | 6]</code><br><code>2x − y + z = 3 → [2 −1 1 | 3]</code><br><code>x + 2y + 3z = 14 → [1 2 3 | 14]</code><br><br>Urutan kolomnya: x, y, z, lalu ruas kanan. Kalau ada variabel yang nggak muncul, tulis 0. Ini disebut matriks augmented.'],
+            ['🔧', 'Boleh ngapain di baris?', 'Ada tiga hal yang aman dilakukan karena nggak mengubah jawaban: tukar dua baris, kalikan satu baris dengan angka (bukan nol), atau tambahkan kelipatan satu baris ke baris lain. Semuanya dilakukan ke seluruh baris, termasuk angka di ruas kanan.<br><br>Tujuannya: bikin angka di bawah diagonal jadi 0. Contoh: baris 2 itu [2 −1 1 | 3], dan kita mau angka 2-nya jadi 0. Kurangkan 2 kali baris 1 ([1 1 1 | 6]), hasilnya [0 −3 −1 | −9]. Angka 2 yang dikali itu disebut pengali (angka yang mau dihilangkan ÷ pivot di baris atas).'],
+            ['🔺', 'Terus jawabannya dari mana?', 'Setelah semua angka di bawah diagonal jadi 0, bentuknya seperti segitiga. Misalnya baris paling bawah jadi [0 0 5 | 15]. Artinya 5z = 15, jadi z = 3.<br><br>Naik ke baris atasnya: y + 2z = 8. Karena z = 3, y = 8 − 6 = 2. Naik lagi: x + y + z = 6, jadi x = 6 − 2 − 3 = 1.<br><br>Ini namanya substitusi mundur. Terakhir, masukkan x = 1, y = 2, z = 3 ke soal awal untuk memastikan. Kalau pivotnya ketemu 0, tukar baris dengan baris di bawahnya. Jangan pernah bagi dengan nol.']],
+            6: [['🏁', 'Bedanya sama Gauss', 'Di Gauss, kamu berhenti di bentuk segitiga, lalu masih harus ngitung dari bawah ke atas. Gauss–Jordan lebih rajin: lanjut membersihkan matriks sampai sisi kirinya cuma berisi angka 1 di diagonal dan 0 di tempat lain (disebut matriks identitas).<br><br>Hasilnya, tiap baris isinya satu variabel saja, dan jawabannya langsung kelihatan di kolom paling kanan, tanpa substitusi mundur.'],
+            ['🪜', 'Caranya, lanjut dari segitiga tadi', 'Kita lanjut dari hasil Gauss tadi:<br><code>[1 1 1 | 6]</code><br><code>[0 1 2 | 8]</code><br><code>[0 0 5 | 15]</code><br><br>Langkah 1: bikin angka 5 jadi 1 dengan membagi seluruh baris 3 dengan 5 (angka 15 di kanan ikut dibagi), jadi [0 0 1 | 3]. Sudah kelihatan z = 3.<br><br>Langkah 2: pakai baris 3 ini untuk membersihkan angka z di atasnya. Baris 2 dikurangi 2 kali baris 3, jadi [0 1 0 | 2], dan y = 2.<br><br>Langkah 3: baris 1 dikurangi baris 3, lalu dikurangi baris 2, jadi [1 0 0 | 1], dan x = 1.'],
+            ['📌', 'Pola yang gampang diingat', 'Semua langkahnya punya pola yang sama: baris baru = baris lama − (angka yang mau dinolkan) × baris pivot. Bagi baris pivot dulu sampai pivotnya 1, supaya "angka yang mau dinolkan" langsung jadi pengali.<br><br>Terakhir, selalu cek balik jawabanmu ke persamaan awal. Di tugas spreadsheet, pastikan kamu menyimpan <b>rumusnya</b>, bukan cuma hasil akhir, kalau nggak tugasnya nggak dinilai. Tanda $ dipakai untuk mengunci sel pengali supaya nggak bergeser saat disalin.']]
+        };
+        const W = {
+            1: ['Akar itu x yang bikin f(x) = 0. Faktorkan: (x − 2)(x + 2) = 0, jadi x = 2 atau x = −2.', 'Naiknya (5 − (−3)) = 8, majunya (3 − 1) = 2. Jadi 8 ÷ 2 = 4.', 'Pangkat turun jadi pengali: 3x² jadi 6x, 2x jadi 2, dan angka −5 hilang. Hasilnya 6x + 2.'],
+            2: ['Tinggal dikurangi: 1,41421356 − 1,41 = 0,00421356. Selisih mentah aja.', 'Galat relatif dibagi nilai acuan. Kalau acuannya 0, jadi bagi nol, dan itu nggak boleh.', 'Dibulatkan: lihat digit berikutnya (7, jadi naik) → 6,49. Dipotong: langsung dibuang → 6,48.'],
+            3: ['Kalau tanda di ujung kiri dan kanan beda, kurva pasti nyebrang sumbu-x di antaranya.', 'Titik tengahnya tinggal (1 + 2) ÷ 2 = 1,5.', 'U itu jarak paling jauh tebakanmu dari akar, dihitung dari lebar interval. Bukan nilai fungsinya.'],
+            4: ['Rumus ini datang dari garis singgung: tebakan baru = tebakan lama dikurangi nilai fungsi dibagi kemiringan.', 'Kemiringannya nol, jadi kamu harus bagi dengan nol, dan itu nggak bisa. Ganti tebakan awalnya.', 'Perubahan kecil aja belum menjamin akurat, jadi cek dua-duanya: δ dan R harus sama-sama ≤ ε.'],
+            5: ['Pengali = angka yang mau dinolkan dibagi pivot. Contoh: 2 ÷ 1 = 2, jadi R₂ − 2R₁.', 'Gauss berhenti di segitiga atas, lalu kamu hitung dari bawah ke atas (substitusi mundur).', 'Dari z = 3: y + 2(3) = 8, jadi y = 8 − 6 = 2.'],
+            6: ['Gauss–Jordan lanjut sampai sisi kiri jadi matriks identitas (RREF).', 'Bagi seluruh baris dengan 5, ruas kanan ikut: 15 ÷ 5 = 3. Jadi [0 0 1 | 3].', 'Jawabannya langsung kebaca dari matriks identitas, nggak perlu hitung mundur. Tapi tetap cek balik ya.']
+        };
+        L.forEach(l => { l.pts = P[l.id]; l.q.forEach((q, i) => { q[5] = W[l.id][i] }) });
+        const RANKS = ['Pemula Hitung 🐣', 'Pemburu Akar 🏹', 'Penakluk Galat 🛡️', 'Master Matriks 🧙', 'Legenda Numerik 👑'];
+        let S = { xp: 0, st: {} }, V = { v: 'map' };
+        try { const s = localStorage.getItem('nq'); if (s) S = JSON.parse(s) } catch (e) { }
+        const save = () => { try { localStorage.setItem('nq', JSON.stringify(S)) } catch (e) { } };
+        const $ = document.getElementById('app');
+        const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const sh = a => a.map(x => [Math.random(), x]).sort((a, b) => a[0] - b[0]).map(x => x[1]);
+        const done = () => L.filter(l => S.st[l.id] > 0).length;
+        const rk = () => Math.min(RANKS.length - 1, Math.floor(S.xp / 100));
+        function hdr() { const r = rk(), n = (S.xp % 100); return `<div class="top"><span class="rank">${RANKS[r]}</span><div class="bar"><i style="width:${r == 4 ? 100 : n}%"></i></div><span class="xp">⭐ ${S.xp} XP</span></div>` }
+        function stars(n) { return n ? '★'.repeat(n) + '☆'.repeat(3 - n) : '☆☆☆' }
+        function map() {
+            V.v = 'map'; const cur = L.findIndex(l => !S.st[l.id]), sr = L.reduce((a, l) => a + (S.st[l.id] || 0), 0), ac = S.n ? Math.round(S.c / S.n * 100) + '%' : '—';
+            let h = hdr() + `<div class="hero"><div class="mas">🦉</div><div><h1>Numerik Quest</h1><p>Belajar Metode Numerik P1–P6 lewat level, bintang, dan bos akhir.</p></div></div><div class="stats"><div><b>${done()}/6</b><small>Level selesai</small></div><div><b>${sr}/18 ★</b><small>Bintang</small></div><div><b>${ac}</b><small>Akurasi jawaban</small></div></div><div class="grid">`;
+            L.forEach((l, i) => { const lock = i > 0 && !S.st[L[i - 1].id]; h += `<button class="node${i == cur ? ' cur' : ''}" style="--c:${l.c}" ${lock ? 'disabled' : ''} onclick="lesson(${l.id})"><span class="em">${lock ? '🔒' : l.e}</span><span class="nt"><small>Pertemuan ${l.id}${S.st[l.id] ? ' · selesai' : i == cur ? ' · berikutnya' : ''}</small><b>${l.t}</b><small>${l.d}</small><span class="stars">${stars(S.st[l.id] || 0)}</span></span></button>` });
+            const bl = done() < 6; h += `<button class="node boss" ${bl ? 'disabled' : ''} onclick="boss()"><span class="em" style="background:#ff5470">${bl ? '🔒' : '🐉'}</span><span class="nt"><small>Bos akhir</small><b>Naga Galat</b><small>8 soal acak dari semua materi</small><span class="stars">${stars(S.st[7] || 0)}</span></span></button></div>`; $.innerHTML = h
+        }
+        let bi, LS;
+        const tbl = (h, r) => '<div style="overflow-x:auto"><table><tr>' + h.map(x => `<th>${x}</th>`).join('') + '</tr>' + r.map(x => '<tr>' + x.map(y => `<td>${y}</td>`).join('') + '</tr>').join('') + '</table></div>';
+        const n4 = x => x.toFixed(4).replace('.', ','), $i = id => document.getElementById(id);
+        function t1(h) {
+            h = +h; const fx = x => x * x - 4, sx = x => 20 + x * 90, sy = y => 200 - (y + 4) * 22, m = (fx(1 + h) - fx(1)) / h; let p = ''; for (let x = 0; x <= 3.2; x += .1)p += sx(x) + ',' + sy(fx(x)) + ' ';
+            $i('t1').innerHTML = `<svg viewBox="0 0 320 240" style="width:100%;background:var(--code);border-radius:14px"><polyline points="${p}" fill="none" stroke="#7c5cff" stroke-width="3"/><line x1="${sx(0)}" y1="${sy(-3 - m)}" x2="${sx(3.2)}" y2="${sy(-3 + m * 2.2)}" stroke="#ff5470" stroke-width="2"/><circle cx="${sx(1)}" cy="${sy(-3)}" r="6" fill="#12b886"/><circle cx="${sx(1 + h)}" cy="${sy(fx(1 + h))}" r="6" fill="#ffb703"/></svg><p><b>Δx = ${h.toFixed(2)}</b> → gradien sekan = <b>${m.toFixed(2)}</b>. Makin kecil Δx, makin dekat ke <b>f′(1) = 2</b> 🎯</p>`
+        }
+        function t2() { const a = +$i('ia').value, b = +$i('ib').value, e = Math.abs(a - b); $i('t2').innerHTML = `<p>Eₐ = <b>${+e.toFixed(8)}</b><br>Eᵣ = <b>${a ? +(e / Math.abs(a)).toFixed(8) : '❌ tak bisa (acuan = 0)'}</b><br>E% = <b>${a ? +(e / Math.abs(a) * 100).toFixed(6) + '%' : '—'}</b></p>` }
+        let nw; function nreset() { nw = { x: 1.5, r: [], ok: 0 }; dn() }
+        function nstep() { if (nw.ok || nw.r.length >= 6) return; const x = nw.x, fx = x * x - 2, d = 2 * x, y = x - fx / d, dl = Math.abs(y - x), R = Math.abs(y * y - 2), c = v => v.toFixed(6).replace('.', ','); nw.r.push([nw.r.length, n4(x), n4(fx), n4(d), n4(y), c(dl), c(R)]); nw.x = y; nw.ok = dl <= 1e-4 && R <= 1e-4; dn() }
+        function dn() { $i('nt').innerHTML = (nw.r.length ? tbl(['n', 'xₙ', 'f', 'f′', 'xₙ₊₁', 'δ', 'R'], nw.r) : '') + (nw.ok ? '<div class="fb good">δ dan R ≤ 0,0001 → berhenti! Akar ≈ √2 🎉</div>' : '') }
+        const MT = {
+            5: [['Matriks awal', [[1, 1, 1, 6], [2, -1, 1, 3], [1, 2, 3, 14]]], ['R₂←R₂−2R₁ dan R₃←R₃−R₁', [[1, 1, 1, 6], [0, -3, -1, -9], [0, 1, 2, 8]]], ['Tukar R₂↔R₃', [[1, 1, 1, 6], [0, 1, 2, 8], [0, -3, -1, -9]]], ['R₃←R₃+3R₂ → segitiga atas ✅', [[1, 1, 1, 6], [0, 1, 2, 8], [0, 0, 5, 15]]], ['Substitusi mundur: z=3 → y=2 → x=1 🎉', [[1, 1, 1, 6], [0, 1, 2, 8], [0, 0, 5, 15]]]],
+            6: [['Mulai dari hasil Gauss', [[1, 1, 1, 6], [0, 1, 2, 8], [0, 0, 5, 15]]], ['R₃←R₃/5 (normalisasi pivot)', [[1, 1, 1, 6], [0, 1, 2, 8], [0, 0, 1, 3]]], ['R₂←R₂−2R₃', [[1, 1, 1, 6], [0, 1, 0, 2], [0, 0, 1, 3]]], ['R₁←R₁−R₃', [[1, 1, 0, 3], [0, 1, 0, 2], [0, 0, 1, 3]]], ['R₁←R₁−R₂ → identitas! x=1, y=2, z=3 🎉', [[1, 0, 0, 1], [0, 1, 0, 2], [0, 0, 1, 3]]]]
+        };
+        let mi = 0, mk = 5;
+        function mdraw() { const [c, m] = MT[mk][mi]; $i('mx').innerHTML = `<div class="fb">${c}</div><pre>${m.map(r => '[ ' + r.slice(0, 3).map(v => String(v).padStart(2)).join('  ') + ' | ' + String(r[3]).padStart(2) + ' ]').join('\n')}</pre>` }
+        function mstep(d) { mi = Math.max(0, Math.min(MT[mk].length - 1, mi + d)); mdraw() }
+        const mxh = `<p>Klik Maju untuk lihat satu operasi baris per langkah.</p><div id="mx"></div><button class="btn alt" onclick="mstep(-1)">← Mundur</button> <button class="btn alt" onclick="mstep(1)">Maju →</button>`;
+        const T = {
+            1: [`<p>Geser slider ini untuk mendekatkan titik kuning (B) ke titik hijau (A). Garis merah = sekan. Perhatiin angka gradiennya!</p><input type="range" min="0.05" max="2" step="0.05" value="2" oninput="t1(this.value)"><div id="t1"></div>`, () => t1(2)],
+            2: [`<p>Coba ganti angkanya, lihat galatnya ikut berubah. Coba juga isi acuan dengan 0!</p>Acuan<input class="in" id="ia" type="number" step="any" value="1.41421356" oninput="t2()">Hampiran<input class="in" id="ib" type="number" step="any" value="1.41" oninput="t2()"><div id="t2"></div>`, t2],
+            3: [`<p>x³ − x − 2 pada [1, 2]. Tebak sisi yang ada akarnya (kiri atau kanan) sampai U ≤ 0,01.</p><div id="bt"></div><button class="btn alt" onclick="breset()">Ulang</button>`, () => breset()],
+            4: [`<p>Kita cari √2 dari tebakan awal 1,5. Klik terus dan lihat tebakannya makin dekat.</p><div id="nt"></div><button class="btn alt" onclick="nstep()">Iterasi berikutnya 🚀</button> <button class="btn alt" onclick="nreset()">Ulang</button>`, nreset],
+            5: [mxh, () => { mk = 5; mi = 0; mdraw() }], 6: [mxh, () => { mk = 6; mi = 0; mdraw() }]
+        };
+        const C = { p: '#7c5cff', g: '#12b886', r: '#ff5470', y: '#ffb703', m: '#8a84b0' };
+        const SV = (b, h = 170) => `<svg class="sv" viewBox="0 0 320 ${h}">${b}</svg>`;
+        const tx = (x, y, t, c, a = 'middle', z = 12) => `<text x="${x}" y="${y}" text-anchor="${a}" style="${c ? 'fill:' + c + ';' : ''}font-size:${z}px">${t}</text>`;
+        const ln = (a, b, c, d, col = C.m, w = 2, da = '0') => `<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${col}" stroke-width="${w}" stroke-dasharray="${da}"/>`;
+        const dt = (x, y, c, r = 6) => `<circle cx="${x}" cy="${y}" r="${r}" fill="${c}"/>`;
+        const bx = (x, y, w, h, c, o = 1, r = 8) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${c}" opacity="${o}"/>`;
+        const cv = (f, a, b, sx, sy, c = C.p) => { let p = ''; for (let i = 0; i <= 60; i++) { const x = a + (b - a) * i / 60; p += sx(x).toFixed(1) + ',' + sy(f(x)).toFixed(1) + ' ' } return `<polyline points="${p}" fill="none" stroke="${c}" stroke-width="3"/>` };
+        const mat = (r, o = {}) => {
+            const w = 46, h = 30; let b = `<g transform="translate(${o.ox || 0},${o.oy || 0}) scale(${o.s || 1})">`;
+            ['x', 'y', 'z', '='].forEach((t, j) => { b += tx(50 + j * w + w / 2, 14, t, C.m) });
+            r.forEach((row, i) => { if ((o.hi || []).includes(i)) b += bx(46, 24 + i * h, w * 4 + 4, h - 2, C.y, .3); row.forEach((v, j) => { if (o.z && i > j && j < 3) b += bx(50 + j * w + 4, 26 + i * h, w - 8, h - 6, C.g, .35, 6); b += tx(50 + j * w + w / 2, 44 + i * h, v, '', 'middle', 15) }) });
+            return b + ln(50 + 3 * w, 22, 50 + 3 * w, 24 + 3 * h, C.m) + ln(44, 22, 44, 24 + 3 * h, C.m, 3) + ln(52 + 4 * w, 22, 52 + 4 * w, 24 + 3 * h, C.m, 3) + '</g>'
+        };
+        const s1 = x => 160 + x * 45, y1 = y => 110 - y * 14, ax1 = ln(10, 110, 310, 110) + ln(160, 10, 160, 168), par = cv(x => x * x - 4, -3, 3.2, s1, y1);
+        const sn = x => 20 + x * 130, yn = y => 100 - y * 30, axn = ln(10, 100, 310, 100), cn = cv(x => x * x - 2, 0, 2.2, sn, yn);
+        const s3 = x => 20 + (x - .5) * 170, y3 = y => 110 - y * 13, sf = x => 160 + x * 50, yf = y => 110 - y * 15, s5 = x => 40 + x * 50, y5 = y => 150 - y * 18;
+        const A0 = [[1, 1, 1, 6], [2, -1, 1, 3], [1, 2, 3, 14]], A1 = [[1, 1, 1, 6], [0, -3, -1, -9], [0, 1, 2, 8]], TR = [[1, 1, 1, 6], [0, 1, 2, 8], [0, 0, 5, 15]], ID = [[1, 0, 0, 1], [0, 1, 0, 2], [0, 0, 1, 3]];
+        const VIS = {
+            1: [SV(ax1 + par + dt(s1(-2), 110, C.g, 7) + dt(s1(2), 110, C.g, 7) + tx(s1(-2), 130, 'akar: x = −2', C.g) + tx(s1(2), 130, 'akar: x = 2', C.g) + tx(160, 12, 'f(x) = x² − 4', C.p)),
+            SV(ln(50, 170, 135, 0, C.p, 3) + ln(60, 150, 130, 150, C.g, 3) + ln(130, 150, 130, 10, C.r, 3) + dt(60, 150, C.p) + dt(130, 10, C.p) + tx(95, 166, 'maju 2', C.g) + tx(172, 86, 'naik 4', C.r) + tx(240, 64, 'gradien', C.m) + tx(240, 90, '4 ÷ 2 = 2', C.p, 'middle', 18)),
+            SV(ax1 + par + ln(190, 171, 300, 34, C.r, 2) + dt(s1(1), y1(-3), C.g) + dt(s1(3), y1(5), C.y) + tx(10, 20, 'A (1, −3) hijau · B (3, 5) kuning', C.m, 'start', 11) + tx(10, 40, 'garis merah = sekan, miringnya 8 ÷ 2 = 4', C.r, 'start', 11)),
+            SV(ax1 + par + ln(175, 171, 270, 112, C.g, 3) + dt(205, 152, C.g, 7) + dt(s1(3), y1(5), C.y, 5) + dt(s1(2), 110, C.y, 5) + dt(227.5, 134.5, C.y, 5) + tx(10, 20, 'titik kuning (B) digeser mendekat ke A', C.y, 'start', 11) + tx(10, 38, 'garis hijau = garis singgung di A', C.g, 'start', 11) + tx(10, 56, 'miringnya = 2, jadi f′(1) = 2', C.p, 'start', 11))],
+            2: [SV(ln(20, 100, 300, 100, C.m, 3) + dt(110, 100, C.y, 8) + dt(200, 100, C.g, 8) + ln(110, 100, 200, 100, C.r, 5) + tx(110, 82, 'hampiran 1,41', C.y) + tx(200, 126, 'acuan 1,41421356', C.g) + tx(155, 60, 'galat ≈ 0,0042', C.r, 'middle', 15) + tx(160, 158, '(jaraknya sengaja diperbesar biar kelihatan)', C.m, 'middle', 10)),
+            SV(bx(8, 50, 92, 76, C.p, .2) + bx(114, 50, 92, 76, C.y, .25) + bx(220, 50, 92, 76, C.g, .25) + tx(54, 72, 'Galat absolut', C.p) + tx(54, 92, 'selisih aja', C.m, 'middle', 11) + tx(54, 114, '0,0042', C.p, 'middle', 14) + tx(160, 72, 'Galat relatif', C.y) + tx(160, 92, '÷ acuan', C.m, 'middle', 11) + tx(160, 114, '0,00298', C.y, 'middle', 14) + tx(266, 72, 'Galat persen', C.g) + tx(266, 92, '× 100', C.m, 'middle', 11) + tx(266, 114, '0,298 %', C.g, 'middle', 14) + tx(107, 92, '›', C.m, 'middle', 20) + tx(213, 92, '›', C.m, 'middle', 20)),
+            SV(bx(40, 30, 34, 100, C.p) + bx(84, 80, 34, 50, C.p) + bx(84, 30, 34, 50, C.r, .35) + tx(57, 146, '2') + tx(101, 146, '1') + tx(79, 20, 'meleset 50%!', C.r) + bx(190, 30, 34, 100, C.p) + bx(234, 30, 34, 100, C.p) + bx(234, 28, 34, 2, C.r) + tx(207, 146, '1.000.000', '', 'middle', 9) + tx(251, 146, '999.999', '', 'middle', 9) + tx(230, 20, 'meleset 0,0001%', C.g) + tx(160, 164, 'sama-sama meleset 1, tapi dampaknya beda jauh', '', 'middle', 10)),
+            SV(tx(160, 30, '6,4876', C.p, 'middle', 26) + ln(130, 42, 85, 96) + ln(190, 42, 235, 96) + bx(20, 98, 130, 56, C.g, .25) + bx(170, 98, 130, 56, C.r, .2) + tx(85, 120, 'dibulatkan', C.g) + tx(85, 146, '6,49', C.g, 'middle', 20) + tx(235, 120, 'dipotong', C.r) + tx(235, 146, '6,48', C.r, 'middle', 20) + tx(60, 64, '7 ≥ 5, naik', C.m, 'middle', 10) + tx(262, 64, 'sisanya dibuang', C.m, 'middle', 10))],
+            3: [SV(bx(20, 15, 280, 34, C.p, .3) + bx(160, 63, 140, 34, C.g, .35) + bx(160, 111, 70, 34, C.y, .4) + tx(160, 37, '1 – 100 · tebak 50: kurang tinggi') + tx(230, 85, '51 – 100 · tebak 75') + tx(195, 133, '51 – 75') + tx(88, 85, '✂️ separuh dibuang', C.m, 'middle', 11) + tx(88, 133, '✂️ dibuang lagi', C.m, 'middle', 11) + tx(160, 162, 'tiap tebakan, daerahnya jadi setengah', C.m, 'middle', 11)),
+            SV(ln(10, 110, 310, 110) + cv(x => x * x * x - x - 2, .5, 2.2, s3, y3) + dt(s3(1), y3(-2), C.r, 7) + dt(s3(2), y3(4), C.g, 7) + dt(193, 110, C.y, 7) + tx(s3(1), y3(-2) + 22, 'a: f(a) negatif', C.r) + tx(s3(2) - 8, y3(4) - 12, 'b: f(b) positif', C.g) + tx(193, 94, 'akar di sini', C.y) + tx(10, 16, 'x³ − x − 2', C.p, 'start')),
+            SV(bx(30, 50, 130, 34, C.m, .3) + bx(160, 50, 130, 34, C.g, .4) + tx(95, 72, 'dibuang', C.m) + tx(225, 72, 'dipakai: [1,5 ; 2]', C.g) + tx(160, 24, 'c = titik tengah', C.p) + tx(30, 108, 'a = 1') + tx(160, 108, 'c = 1,5') + tx(290, 108, 'b = 2') + tx(30, 126, 'f = −2 (−)', C.r, 'middle', 11) + tx(160, 126, 'f = −0,125 (−)', C.r, 'middle', 11) + tx(290, 126, 'f = 4 (+)', C.g, 'middle', 11) + tx(160, 150, 'kiri sama-sama negatif → akar pasti di kanan', C.m, 'middle', 11)),
+            SV([.5, .25, .125, .0625, .03125, .015625, .0078125].map((u, i) => bx(24, 6 + i * 22, u * 400, 14, u <= .01 ? C.g : C.p, .8, 4) + tx(24 + u * 400 + 6, 17 + i * 22, 'U = ' + String(u).replace('.', ','), '', 'start', 11)).join('') + ln(28, 0, 28, 160, C.r, 2, '4') + tx(190, 160, 'garis merah = toleransi 0,01', C.r, 'middle', 11))],
+            4: [SV(axn + cn + ln(182, 115, 234, 79, C.g, 3) + ln(215, 92, 215, 100, C.m, 2, '3') + dt(215, 92, C.r) + dt(204, 100, C.g, 7) + tx(10, 16, '● tebakan lama 1,5', C.r, 'start') + tx(10, 34, '● tebakan baru ≈ 1,4167', C.g, 'start') + tx(10, 52, 'garis hijau = garis singgung', C.g, 'start', 11)),
+            SV(ln(10, 130, 310, 130) + ln(70, 40, 70, 130, C.r, 3) + ln(70, 40, 210, 130, C.g, 3) + ln(70, 130, 210, 130, C.y, 4) + dt(70, 40, C.p, 7) + dt(210, 130, C.g, 7) + tx(62, 84, 'tinggi', C.r, 'end') + tx(62, 100, 'f(x)', C.r, 'end') + tx(140, 152, 'geser = f ÷ f′', C.y, 'middle', 14) + tx(165, 66, 'garis singgung', C.g, 'start', 11) + tx(78, 32, 'tebakanmu', C.p, 'start', 11) + tx(210, 112, 'tebakan baru', C.g, 'middle', 11)),
+            SV(bx(20, 20, 50, 18, C.r, .7) + bx(20, 60, 150, 18, C.y, .7) + bx(20, 100, 250, 18, C.g, .7) + tx(20, 14, '1,5 → 1 angka benar', '', 'start', 11) + tx(20, 54, '1,4167 → 3 angka benar', '', 'start', 11) + tx(20, 94, '1,4142 → 5 angka benar', '', 'start', 11) + tx(160, 150, 'tiap putaran, makin banyak angka yang benar', C.m, 'middle', 11)),
+            SV(ln(10, 110, 310, 110) + cv(x => x * x - 3, -2.6, 2.6, sf, yf) + ln(60, 155, 260, 155, C.r, 3, '6') + dt(160, 155, C.r, 7) + dt(sf(-1.732), 110, C.g, 5) + dt(sf(1.732), 110, C.g, 5) + tx(160, 142, 'x₀ = 0, kemiringan = 0', C.r) + tx(160, 16, 'garisnya datar, nggak pernah nyentuh sumbu-x', C.r, 'middle', 11) + tx(160, 66, 'bagi nol ✖ ganti tebakan', C.r))],
+            5: [SV(ln(30, 150, 310, 150) + ln(40, 10, 40, 160) + ln(s5(0), y5(5), s5(5), y5(0), C.p, 3) + ln(s5(0), y5(7), s5(3.5), y5(0), C.r, 3) + dt(140, 96, C.y, 8) + tx(150, 86, '(2, 3)', C.y, 'start', 13) + tx(200, 18, 'x + y = 5', C.p, 'start') + tx(200, 36, '2x + y = 7', C.r, 'start') + tx(150, 128, 'ketemu di x = 2, y = 3', C.y, 'start', 11)),
+            SV(mat(A0, { ox: 19 }), 128),
+            SV(mat(A0, { s: .62, oy: 22, hi: [1] }) + tx(160, 60, 'R₂ − 2R₁', C.p, 'middle', 12) + tx(160, 86, '➜', C.p, 'middle', 24) + mat(A1, { ox: 168, s: .62, oy: 22, hi: [1] }) + tx(75, 16, 'sebelum', C.m) + tx(245, 16, 'sesudah', C.m), 110),
+            SV(mat(TR, { s: .9, z: true }) + tx(268, 44, 'x = 1', C.g, 'middle', 14) + tx(268, 64, '↑', C.m, 'middle', 16) + tx(268, 84, 'y = 2', C.y, 'middle', 14) + tx(268, 104, '↑', C.m, 'middle', 16) + tx(268, 124, 'z = 3', C.r, 'middle', 14) + tx(120, 142, 'hijau = sudah nol · baca dari bawah ke atas', C.g, 'middle', 11), 150)],
+            6: [SV(mat(TR, { s: .62, oy: 30, z: true }) + mat(ID, { ox: 168, s: .62, oy: 30 }) + tx(75, 22, 'Gauss', C.p) + tx(245, 22, 'Gauss–Jordan', C.g) + tx(75, 128, 'masih hitung mundur', C.m, 'middle', 11) + tx(245, 128, 'jawaban langsung kebaca', C.m, 'middle', 11), 140),
+            SV(mat(TR, { s: .62, oy: 28 }) + tx(160, 60, '÷ 5, lalu', C.p, 'middle', 11) + tx(160, 74, 'bersihkan atas', C.p, 'middle', 11) + tx(160, 100, '➜', C.p, 'middle', 22) + mat(ID, { ox: 168, s: .62, oy: 28 }) + tx(75, 18, 'hasil Gauss', C.m) + tx(245, 18, 'x = 1, y = 2, z = 3', C.g), 125),
+            SV(bx(6, 50, 84, 60, C.p, .25) + bx(112, 40, 98, 80, C.y, .3) + bx(236, 50, 78, 60, C.g, .3) + tx(48, 84, 'baris lama', C.p) + tx(100, 86, '−', C.m, 'middle', 26) + tx(161, 68, 'angka yang') + tx(161, 84, 'mau dinolkan') + tx(161, 102, '× baris pivot') + tx(223, 86, '=', C.m, 'middle', 26) + tx(275, 84, 'baris baru', C.g) + tx(160, 150, 'pola yang sama di tiap langkah', C.m, 'middle', 11), 165)]
+        };
+        function lesson(id) { const l = L.find(x => x.id == id), x = X[id], t = T[id]; LS = { l, i: 0, s: [['💡', 'Bayangin dulu', x.an], ...l.pts.map((q, k) => [q[0], q[1], q[2], 0, VIS[id][k]]), ['🎮', 'Coba sendiri!', t[0], t[1]], ['🧠', 'Ingat ini!', x.mem]] }; slide() }
+        function slide() {
+            V.v = 'lesson'; const { l, i, s } = LS, p = s[i], last = i == s.length - 1, lab = (q, k) => k == 0 ? 'Analogi' : k == s.length - 1 ? 'Ingat ini' : q[3] ? 'Coba sendiri' : (q[1] || q[2].replace(/<[^>]+>/g, ' ').split(/[:.=(?]/)[0].trim().slice(0, 24));
+            $.innerHTML = hdr() + `<button class="back" onclick="map()"><span class="ar">‹</span> Peta</button><h2 class="lt">${l.e} P${l.id} · ${l.t}</h2><div class="dots">${s.map((_, k) => `<i class="${k <= i ? 'on' : ''}"></i>`).join('')}</div><div class="lay"><div class="side">${s.map((q, k) => `<button class="st${k == i ? ' cur' : ''}${k < i ? ' dn' : ''}" style="--c:${l.c}" onclick="LS.i=${k};slide()"><span>${k < i ? '✓' : q[0]}</span>${lab(q, k)}</button>`).join('')}</div><div><div class="slide ${i == 0 ? 'an' : last ? 'mem' : ''}" style="--c:${l.c}"><div class="sic">${p[0]}</div>${p[1] ? `<h3>${p[1]}</h3>` : ''}${p[4] ? `<div class="vis">${p[4]}</div>` : ''}<div class="sb">${p[2]}</div></div><div class="nav"><button class="btn alt" ${i ? '' : 'disabled'} onclick="LS.i--;slide()">← Balik</button>${last ? `<button class="btn" onclick="quiz(${l.id})">Mulai Quiz ⚔️</button>` : `<button class="btn" onclick="LS.i++;slide()">Lanjut →</button>`}</div></div></div>`;
+            if (p[3]) p[3](); window.scrollTo(0, 0)
+        }
+        const f = x => x * x * x - x - 2;
+        function bshow(msg) { const { a, b } = bi, c = (a + b) / 2, u = (b - a) / 2; $i('bt').innerHTML = (bi.rows.length ? tbl(['iter', 'a', 'b', 'c', 'f(c)', 'U'], bi.rows.map(x => [x[0], ...x.slice(1).map(n4)])) : '') + (u <= 0.01 ? `<div class="fb good">U ≤ 0,01 → berhenti 🎉 akar ≈ ${n4(c)}</div>` : `<div class="fb">Iterasi ${bi.rows.length + 1}: interval [${n4(a)}; ${n4(b)}], c = ${n4(c)}, f(c) = ${n4(f(c))}. Di mana akarnya?</div><button class="btn alt" onclick="bpick(0)">Di kiri [a, c]</button> <button class="btn alt" onclick="bpick(1)">Di kanan [c, b]</button>`) + (msg || '') + '<br><button class="btn alt" onclick="breset()">Ulang</button>' }
+        function bpick(r) { const { a, b } = bi, c = (a + b) / 2, right = f(a) * f(c) > 0 ? 1 : 0; if (r != right) { bshow('<div class="fb bad">Hmm, belum pas. Coba cek tandanya lagi: kalau f(a)·f(c) &lt; 0 akarnya di kiri, kalau &gt; 0 di kanan.</div>'); return } bi.rows.push([bi.rows.length + 1, a, b, c, f(c), (b - a) / 2]); if (right) bi.a = c; else bi.b = c; bshow() }
+        function breset() { bi = { a: 1, b: 2, rows: [] }; bshow() }
+        let Q;
+        function quiz(id) { const l = L.find(x => x.id == id); Q = { id, qs: sh(l.q), i: 0, h: 3, ok: 0, c: l.c }; ask() }
+        function boss() { const all = L.flatMap(l => l.q); Q = { id: 7, qs: sh(all).slice(0, 8), i: 0, h: 4, ok: 0, c: '#ff5470' }; ask() }
+        function ask() {
+            V.v = 'quiz'; const q = Q.qs[Q.i], o = sh(q.slice(1, 5).map((t, k) => [t, k == 0])); Q.cur = { o, q };
+            $.innerHTML = hdr() + `<div class="qw"><div class="hud"><button class="back" onclick="map()"><span class="ar">✕</span> Keluar</button><span>${'❤️'.repeat(Math.max(0, Q.h)) || '💔'}</span><span class="chip">🔥 Combo ${Q.cb || 0}</span></div><div class="qbar"><i style="width:${Q.i / Q.qs.length * 100}%"></i></div><div class="card" style="border-color:${Q.c}"><small class="mut">Soal ${Q.i + 1} dari ${Q.qs.length} · tekan 1–4 untuk menjawab</small><h3>${esc(q[0])}</h3><div id="os">${o.map((x, k) => `<button class="opt" onclick="pick(${k})"><span class="lt2">${'ABCD'[k]}</span>${esc(x[0])}</button>`).join('')}</div><div id="fb"></div></div></div>`; window.scrollTo(0, 0)
+        }
+        function pick(k) {
+            const { o, q } = Q.cur, right = o[k][1], first = !S.st[Q.id]; let bn = 0;
+            document.querySelectorAll('.opt').forEach((b, j) => { b.disabled = true; if (o[j][1]) b.classList.add('good'); else if (j == k) b.classList.add('bad') });
+            if (right) { Q.ok++; Q.cb = (Q.cb || 0) + 1; if (first) { S.xp += 10; if (Q.cb >= 3) { S.xp += 5; bn = 1 } } } else { Q.h--; Q.cb = 0 }
+            S.n = (S.n || 0) + 1; S.c = (S.c || 0) + (right ? 1 : 0); save();
+            const last = Q.i == Q.qs.length - 1 || Q.h <= 0;
+            $i('fb').innerHTML = `<div class="fb ${right ? 'good' : 'bad'}">${right ? '🎉 Benar!' + (first ? ' +10 XP' : '') + (bn ? ' · combo +5 🔥' : '') : '😅 Yah, belum pas. Tenang, ini penjelasannya:'}<br><span style="font-weight:500">${q[5]}</span></div><button class="btn" onclick="${last ? 'fin()' : 'Q.i++;ask()'}">${last ? 'Lihat hasil' : 'Lanjut'} (Enter)</button>`
+        }
+        function fin() {
+            const win = Q.h > 0, n = win ? Math.max(1, Math.min(3, Q.h - (Q.id == 7 ? 1 : 0))) : 0;
+            let bonus = 0; if (win) { if (!S.st[Q.id]) bonus = Q.id == 7 ? 50 : 20; S.xp += bonus; S.st[Q.id] = Math.max(S.st[Q.id] || 0, n) } save();
+            $.innerHTML = hdr() + `<div class="card" style="text-align:center;max-width:560px;margin:14px auto"><div class="big">${win ? (Q.id == 7 ? '👑' : '🏆') : '😵'}</div><h2>${win ? (Q.id == 7 ? 'Naga Galat dikalahkan!' : 'Level selesai!') : 'Hati habis!'}</h2><p class="stars" style="font-size:34px;margin:6px 0">${stars(n)}</p><p>${Q.ok}/${Q.qs.length} benar${bonus ? ` · bonus +${bonus} XP` : ''}</p>${win ? '' : '<p style="color:var(--mut)">Baca ulang materinya, lalu coba lagi.</p>'}<button class="btn" onclick="${Q.id == 7 ? 'boss()' : 'quiz(' + Q.id + ')'}">Main lagi</button> <button class="btn alt" onclick="${win || Q.id == 7 ? 'map()' : 'lesson(' + Q.id + ')'}">${win || Q.id == 7 ? 'Ke peta' : 'Baca materi'}</button></div>`; if (win) conf()
+        }
+        function conf() { const d = document.createElement('div'); d.className = 'conf'; d.innerHTML = Array.from({ length: 30 }, () => `<span style="left:${Math.random() * 100}%;animation-delay:${Math.random() * .8}s">${['🎉', '⭐', '✨', '💎', '🔥'][Math.random() * 5 | 0]}</span>`).join(''); document.body.appendChild(d); setTimeout(() => d.remove(), 3500) }
+        document.addEventListener('keydown', e => {
+            if (/INPUT|TEXTAREA/.test(e.target.tagName)) return;
+            if (V.v == 'lesson') { if (e.key == 'ArrowRight' && LS.i < LS.s.length - 1) { LS.i++; slide() } if (e.key == 'ArrowLeft' && LS.i > 0) { LS.i--; slide() } }
+            else if (V.v == 'quiz') {
+                const k = '1234abcd'.indexOf(e.key.toLowerCase()); if (k >= 0) { const b = document.querySelectorAll('.opt')[k % 4]; if (b) b.click() }
+                if (e.key == 'Enter' && e.target.tagName != 'BUTTON') { const n = document.querySelector('#fb .btn'); if (n) n.click() }
+            }
+        });
+        map();
+    </script>
+</body>
+
+</html>
